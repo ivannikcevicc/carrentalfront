@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { register as registerUser } from "./../../../auth";
+import { register as registerUser } from "@/lib/auth";
 
 interface RegisterFormInputs {
   name: string;

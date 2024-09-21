@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { login } from "./../../../auth";
+import { login } from "@/lib/auth";
 
 interface LoginFormInputs {
   email: string;

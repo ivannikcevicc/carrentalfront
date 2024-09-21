@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { getSession } from "../../auth";
+import { getSession } from "./auth";
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: "https://lucic.tech/api",

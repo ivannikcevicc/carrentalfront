@@ -2,7 +2,7 @@ import CarGrid from "@/components/car-grid";
 import Landing from "@/components/landing";
 import Search from "@/components/search";
 import Link from "next/link";
-import { getUserInfo } from "../../../auth";
+import { getUserInfo } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
