@@ -2,8 +2,16 @@ import CarGrid from "@/components/car-grid";
 import Landing from "@/components/landing";
 import Search from "@/components/search";
 import Link from "next/link";
+import { getUserInfo } from "../../../auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getUserInfo();
+  if (!user) {
+    console.log(user);
+    redirect("/login");
+  }
+
   return (
     <>
       <div>

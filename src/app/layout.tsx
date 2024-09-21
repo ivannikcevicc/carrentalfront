@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/navbar";
 
 const PlusJakartaSans = localFont({
   src: "./fonts/PlusJakartaSans-VariableFont_wght.ttf",
@@ -29,7 +28,6 @@ export default function RootLayout({
       <body
         className={`${PlusJakartaSans.variable} ${PlusJakartaSansItalic.variable} antialiased bg-light`}
       >
-        <Navbar></Navbar>
         {children}
       </body>
     </html>

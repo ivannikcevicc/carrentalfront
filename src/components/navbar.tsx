@@ -10,8 +10,9 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import Link from "next/link";
+import LogoutButton from "./logoutButton";
 
-const navbar = () => {
+const Navbar = () => {
   return (
     <div className="flex p-[30px] justify-between border-b bg-white">
       <span className="text-[38px] font-bold text-primary">
@@ -87,6 +88,9 @@ const navbar = () => {
             </MenubarTrigger>
             <MenubarContent>
               <MenubarItem>
+                <LogoutButton />
+              </MenubarItem>
+              <MenubarItem>
                 New Tab <MenubarShortcut>⌘T</MenubarShortcut>
               </MenubarItem>
             </MenubarContent>
@@ -97,4 +101,4 @@ const navbar = () => {
   );
 };
 
-export default navbar;
+export default Navbar;
