@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Suspense } from "react";
+import Loader from "@/components/loader";
 
 const PlusJakartaSans = localFont({
   src: "./fonts/PlusJakartaSans-VariableFont_wght.ttf",
@@ -28,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${PlusJakartaSans.variable} ${PlusJakartaSansItalic.variable} antialiased bg-light`}
       >
-        {children}
+        <Suspense fallback={<Loader />}>{children}</Suspense>
       </body>
     </html>
   );
