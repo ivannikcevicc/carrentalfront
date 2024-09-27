@@ -31,3 +31,10 @@ export interface Session {
   user: User;
   token: string;
 }
+
+export interface Testimonial {
+  imgSrc: string;
+  name: string;
+  location: string;
+  quote: string;
+}

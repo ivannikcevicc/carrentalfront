@@ -4,6 +4,7 @@ import Search from "@/components/search";
 import Link from "next/link";
 import { getUserInfo } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Testimonials from "@/components/testimonials";
 
 export default async function Home() {
   const user = await getUserInfo();
@@ -27,7 +28,8 @@ export default async function Home() {
           View All
         </Link>
       </div>
-      <CarGrid />
+      <CarGrid filter={true} />
+      <Testimonials />
     </>
   );
 }
