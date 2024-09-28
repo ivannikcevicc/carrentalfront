@@ -6,9 +6,11 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 export const HeartButton = ({
   isFavorite,
   carId,
+  size = 28,
 }: {
   isFavorite: boolean;
   carId: string;
+  size?: number;
 }) => {
   const [hasFavorited, toggleFavorite] = useState(isFavorite);
 
@@ -20,11 +22,11 @@ export const HeartButton = ({
       className=" relative hover opacity-80 transition cursor-pointer translate-y-1"
     >
       <AiOutlineHeart
-        size={32}
+        size={size + 4}
         className="fill-white absolute -top-[2px] -right-[2px]"
       />
       <AiFillHeart
-        size={28}
+        size={size}
         className={` ${hasFavorited ? "fill-rose-500" : "fill-neutral-500/70"}`}
       />
     </div>

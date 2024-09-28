@@ -71,9 +71,47 @@ const TestimonialsSlider = ({ data }: { data: Testimonial[] }) => {
 
   return (
     <div className="w-full mx-auto px-4">
-      <Slider {...settings}>
+      <style jsx global>{`
+        .slick-dots {
+          display: flex !important;
+          justify-content: center;
+          align-items: center;
+          padding: 0;
+        }
+        .slick-dots li {
+          width: 16px;
+          height: 16px;
+          margin: 0 8px;
+          transition: all 0.3s ease;
+        }
+        .slick-dots li button {
+          width: 16px;
+          height: 16px;
+          padding: 0;
+        }
+        .slick-dots li button:before {
+          font-size: 0;
+          width: 16px;
+          height: 16px;
+          background-color: #d9d9d9;
+          border-radius: 8px;
+          opacity: 1;
+          transition: all 0.3s ease;
+        }
+        .slick-dots li.slick-active {
+          width: 40px;
+        }
+        .slick-dots li.slick-active button {
+          width: 40px;
+        }
+        .slick-dots li.slick-active button:before {
+          width: 40px;
+          background-color: #1572d3;
+        }
+      `}</style>
+      <Slider {...settings} className="mx-3">
         {data.map((testimonial, index) => (
-          <div key={index} className="px-2">
+          <div key={index} className="px-2 mb-4">
             <Card className="h-full">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
