@@ -3,17 +3,19 @@ import { HeartButton } from "@/components/heart-button";
 import StarRating from "@/components/starRating";
 
 import RentProvider from "@/components/rentProvider";
+import { getVehicle } from "@/lib/queries";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 };
 
-const Page = ({ params }: { params: { carId: string } }) => {
+const Page = async ({ params }: { params: { carId: string } }) => {
   const { carId } = params;
 
-  // Sample text content
-  const description = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis malesuada nisl, non ornare justo tristique eu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris convallis, leo non eleifend tempus, libero sem eleifend turpis, vel posuere nisi neque sed nulla. Sed vel orci nec purus congue posuere. Sed nulla ipsum, sodales vel scelerisque maximus, sodales ut velit. In rutrum nulla id iaculis congue. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In tempor consectetur aliquet. Donec id sem ut odio dignissim interdum. Nam sit amet ipsum consequat, pharetra tellus sed, dictum leo. Curabitur interdum metus eget convallis ullamcorper. Donec suscipit lacinia elit, quis fermentum augue.`;
+  const car = await getVehicle(carId);
 
+  // Sample text content
+  const description = car.description;
   // Define the max length for truncation
   const maxLength = 288; // Adjust as needed
 
@@ -22,10 +24,9 @@ const Page = ({ params }: { params: { carId: string } }) => {
       <aside className="w-[47%]">
         <ImgPick />
       </aside>
-
-      <main className="w-[53%] rounded-2xl bg-white p-8 ">
+      <main className="w-[53%] rounded-2xl bg-white p-8 flex flex-col">
         <div className="flex items-center gap-8 ">
-          <h2 className="text-[2.75rem] font-bold">Porsche Title</h2>
+          <h2 className="text-[2.75rem] font-bold">{car.make}</h2>
           <HeartButton carId={carId} isFavorite={false} size={44} />
         </div>
         <div className="flex gap-3 items-center mt-2 mb-[1rem]">
@@ -38,30 +39,30 @@ const Page = ({ params }: { params: { carId: string } }) => {
         <div className="grid grid-cols-2 2xl:grid-cols-3  grid-rows-3 2xl:grid-rows-2  gap-x-8 gap-4 mt-[2rem] text-[20px] xl:text-[25px]">
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Type Car</span>
-            <span className="font-semibold">Sport</span>
+            <span className="font-semibold">{car.type}</span>
           </div>
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Capacity</span>
-            <span className="font-semibold">2 Person</span>
+            <span className="font-semibold">{car.seating_capacity} Person</span>
           </div>
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Fuel Type</span>
-            <span className="font-semibold">Diesel</span>
+            <span className="font-semibold">{car.fuel_type}</span>
           </div>
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Steering</span>
-            <span className="font-semibold">Manual</span>
+            <span className="font-semibold">{car.transmission}</span>
           </div>
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Gasoline</span>
-            <span className="font-semibold">XL</span>
+            <span className="font-semibold">{car.fuel_capacity}</span>
           </div>
           <div className="w-full flex justify-between items-center">
             <span className="text-gray-500">Year</span>
-            <span className="font-semibold">2020</span>
+            <span className="font-semibold">{car.year}</span>
           </div>
         </div>
-        <RentProvider />
+        <RentProvider price={car.price_per_day} />
       </main>
     </div>
   );

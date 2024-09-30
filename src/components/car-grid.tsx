@@ -9,7 +9,10 @@ const CarGrid = async ({
   slim?: boolean;
   filter?: boolean;
 }) => {
+  // Wait for the Promise to resolve
   const cars = await getVehicles();
+
+  // Now that we have the cars, we can safely filter them
   const displayedCars = filter ? cars.slice(0, 4) : cars;
 
   return (
