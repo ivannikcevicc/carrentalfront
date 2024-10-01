@@ -41,7 +41,7 @@ const card = ({ car }: { car: Car }) => {
             People
           </span>
         </div>
-        <div className="flex justify-between font-semibold flex-wrap text-[14px] text-gray-400 gap-2">
+        <div className="flex justify-between font-semibold flex-wrap text-[14px] mt-4 text-gray-400 gap-2">
           <div>
             {" "}
             <span className="text-[20px] text-black">

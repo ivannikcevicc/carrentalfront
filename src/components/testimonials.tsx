@@ -31,7 +31,7 @@ const Testimonials = () => {
   return (
     <div className="mt-[2rem]">
       <img src={topWave.src} alt="topWave" className="w-full" />
-      <div className="min-h-[80vh] bg-[#1572D31A] flex flex-col items-center justify-center gap-4 py-12">
+      <div className="min-h-[80vh] bg-[#E0EAF6] flex flex-col items-center justify-center gap-4 py-12">
         <span className="uppercase text-primary font-semibold py-3 px-7 rounded-lg bg-[#1571d313]">
           Testimonials
         </span>

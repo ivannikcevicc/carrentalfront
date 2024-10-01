@@ -3,8 +3,10 @@ import { HeartButton } from "@/components/heart-button";
 import StarRating from "@/components/starRating";
 
 import RentProvider from "@/components/rentProvider";
-import { getVehicle } from "@/lib/queries";
+import { getReviewsByCarId, getVehicle } from "@/lib/queries";
 import ReviewChart from "@/components/ReviewChart";
+import Review from "@/components/Review";
+import ReviewProvider from "@/components/ReviewProvider";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
@@ -14,6 +16,7 @@ const Page = async ({ params }: { params: { carId: string } }) => {
   const { carId } = params;
 
   const car = await getVehicle(carId);
+  const reviews = await getReviewsByCarId(carId);
 
   // Sample text content
   const description = car.description;
@@ -70,10 +73,12 @@ const Page = async ({ params }: { params: { carId: string } }) => {
         </main>
       </div>
       <div className="p-[3.5%] pt-0 flex gap-[4%]">
-        <div className="w-[47%] rounded-2xl bg-white p-5 flex flex-col">
+        <div className="w-[47%]  flex flex-col">
           <ReviewChart />
         </div>
-        <div className="w-[53%] rounded-2xl bg-white p-5 flex flex-col">a</div>
+        <div className="w-[53%]  flex flex-col">
+          <ReviewProvider reviews={reviews} />
+        </div>
       </div>
     </>
   );
