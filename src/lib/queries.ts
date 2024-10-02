@@ -6,7 +6,7 @@ export async function getVehicles() {
   try {
     const result = await get("/vehicles");
 
-    //@ts-expect-error
+    //@ts-expect-error aaa
 
     return result.data as Car[];
   } catch (error) {
