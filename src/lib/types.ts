@@ -1,3 +1,5 @@
+import { DateRange } from "react-day-picker";
+
 export interface Car {
   id: number;
   make: string;
@@ -51,4 +53,24 @@ export interface Review {
     id: number;
     name: string;
   };
+}
+
+export interface DateTimeRange extends DateRange {
+  startTime?: string;
+  endTime?: string;
+}
+
+export interface DatePickerProps {
+  dateRange: DateTimeRange | undefined;
+  setDateRange: React.Dispatch<React.SetStateAction<DateTimeRange | undefined>>;
+  selectedCity: string | undefined;
+  setSelectedCity: React.Dispatch<React.SetStateAction<string | undefined>>;
+  mode: "search" | "rent";
+  showTimeSelect?: boolean;
+  onSubmit?: (data: {
+    dateRange: DateTimeRange | undefined;
+    selectedCity: string | undefined;
+  }) => void;
+  submitButtonText?: string;
+  price?: string;
 }

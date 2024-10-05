@@ -1,59 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
-import RentDate from "@/components/rentDate";
-import { addDays } from "date-fns";
-import { DateRange } from "react-day-picker";
-import { Button } from "@/components/ui/button";
+import { DateTimeRange } from "@/lib/types";
+import DatePickerBase from "./DatePickerBase";
+import { useState } from "react";
 
-const RentProvider = ({ price }: { price: string }) => {
-  // Form state
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: addDays(new Date(), 2),
-    to: addDays(new Date(), 9),
-  });
-  const [startTime, setStartTime] = useState<string>("09:00");
-  const [endTime, setEndTime] = useState<string>("17:00");
+interface RentProviderProps {
+  price: string;
+}
+
+const RentProvider: React.FC<RentProviderProps> = ({ price }) => {
+  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(
+    undefined
+  );
   const [selectedCity, setSelectedCity] = useState<string | undefined>(
     undefined
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log({
-      dateRange,
-      startTime,
-      endTime,
-      selectedCity,
-    });
+  const handleRent = (data: {
+    dateRange: DateTimeRange | undefined;
+    selectedCity: string | undefined;
+  }) => {
+    console.log("Renting with:", data);
   };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <RentDate
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-        startTime={startTime}
-        setStartTime={setStartTime}
-        endTime={endTime}
-        setEndTime={setEndTime}
-        selectedCity={selectedCity}
-        setSelectedCity={setSelectedCity}
-      />
-      <div className="flex justify-between font-semibold flex-wrap text-[22px] mt-10 text-gray-400 gap-2">
-        <div>
-          {" "}
-          <span className="text-[40px] text-black">
-            {/* ${car.price_per_day}/ */}${price}/
-          </span>{" "}
-          day
-        </div>
-        <Button className="rounded-sm text-[20px] px-10 py-8 font-semibold">
-          Rent Now
-        </Button>
-      </div>
-    </form>
+    <DatePickerBase
+      mode="rent"
+      dateRange={dateRange}
+      setDateRange={setDateRange}
+      selectedCity={selectedCity}
+      setSelectedCity={setSelectedCity}
+      onSubmit={handleRent}
+      showTimeSelect={true}
+      price={price}
+    />
   );
 };
-
 export default RentProvider;

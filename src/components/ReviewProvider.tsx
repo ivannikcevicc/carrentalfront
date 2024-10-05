@@ -206,20 +206,24 @@ const ReviewProvider = ({ reviews }: { reviews: ReviewType[] }) => {
             </div>
 
             <DialogFooter>
-              {error && (
-                <p className="col-span-4 text-red-500 text-sm">{error}</p> // Display error message if any
-              )}
               <Button type="submit" onClick={handleSubmit}>
                 Create review
               </Button>
+              {error && (
+                <p className="col-span-4 text-red-500 text-sm">{error}</p> // Display error message if any
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
       <div className="flex flex-col divide-y-2 rounded-2xl bg-white px-6 py-2">
-        {sortedReviews.map((review) => (
-          <Review key={review.id} review={review} />
-        ))}
+        {sortedReviews.length > 0 ? (
+          sortedReviews.map((review) => (
+            <Review key={review.id} review={review} />
+          ))
+        ) : (
+          <div>No reviews found</div>
+        )}
       </div>
     </>
   );
