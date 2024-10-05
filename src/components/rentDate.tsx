@@ -1,14 +1,13 @@
-"use client";
-
 import * as React from "react";
 import {
   format,
-  setHours,
-  setMinutes,
-  setSeconds,
-  setMilliseconds,
+  addDays,
+  isBefore,
+  isAfter,
+  startOfDay,
+  endOfDay,
 } from "date-fns";
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
 import { DateRange } from "react-day-picker";
 import { FaChevronDown } from "react-icons/fa";
 import {
@@ -35,12 +33,8 @@ import { ICity } from "country-state-city";
 const MONTENEGRO_COUNTRY_CODE = "ME";
 
 interface RentDateProps {
-  dateRange: DateRange;
-  setDateRange: React.Dispatch<React.SetStateAction<DateRange>>;
-  startTime: string;
-  setStartTime: React.Dispatch<React.SetStateAction<string>>;
-  endTime: string;
-  setEndTime: React.Dispatch<React.SetStateAction<string>>;
+  dateRange: DateRange | undefined;
+  setDateRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
   selectedCity: string | undefined;
   setSelectedCity: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
@@ -48,10 +42,6 @@ interface RentDateProps {
 const RentDate: React.FC<RentDateProps> = ({
   dateRange,
   setDateRange,
-  startTime,
-  setStartTime,
-  endTime,
-  setEndTime,
   selectedCity,
   setSelectedCity,
 }) => {
@@ -59,13 +49,13 @@ const RentDate: React.FC<RentDateProps> = ({
 
   // Format date range for display
   const formatDateRange = () => {
-    if (dateRange.from && dateRange.to) {
-      return `${format(dateRange.from, "LLL dd, y")} ${startTime} - ${format(
+    if (dateRange?.from && dateRange?.to) {
+      return `${format(dateRange.from, "LLL dd, y")} - ${format(
         dateRange.to,
         "LLL dd, y"
-      )} ${endTime}`;
+      )}`;
     }
-    return "Pick a date and time range";
+    return "Pick a date range";
   };
 
   React.useEffect(() => {
@@ -77,60 +67,27 @@ const RentDate: React.FC<RentDateProps> = ({
     }
   }, []);
 
-  // Function to update dateRange with new time values
-  const updateDateRangeWithTime = (
-    range: DateRange,
-    newStartTime: string,
-    newEndTime: string
-  ) => {
-    const fromDate = new Date(range.from as Date);
-    const toDate = new Date(range.to as Date);
-
-    const updatedFromDate = setMilliseconds(
-      setSeconds(
-        setMinutes(
-          setHours(fromDate, parseInt(newStartTime.split(":")[0], 10)),
-          parseInt(newStartTime.split(":")[1], 10)
-        ),
-        0
-      ),
-      0
-    );
-    const updatedToDate = setMilliseconds(
-      setSeconds(
-        setMinutes(
-          setHours(toDate, parseInt(newEndTime.split(":")[0], 10)),
-          parseInt(newEndTime.split(":")[1], 10)
-        ),
-        0
-      ),
-      0
-    );
-
-    setDateRange({
-      from: updatedFromDate,
-      to: updatedToDate,
-    });
-  };
-
-  // Handle date selection and update dateRange with the selected date and current time
+  // Handle date selection
   const handleDateSelect = (range: DateRange | undefined) => {
-    if (!range || !range.from || !range.to) return;
-    updateDateRangeWithTime(range, startTime, endTime);
-  };
+    if (!range) return;
 
-  // Handle time changes and immediately apply the new time to the selected date range
-  const handleTimeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isStart: boolean
-  ) => {
-    const newTime = e.target.value;
-    if (isStart) {
-      setStartTime(newTime);
-      updateDateRangeWithTime(dateRange, newTime, endTime);
-    } else {
-      setEndTime(newTime);
-      updateDateRangeWithTime(dateRange, startTime, newTime);
+    let { from, to } = range;
+
+    // If only 'from' is selected
+    if (from && !to) {
+      setDateRange({ from: startOfDay(from), to: endOfDay(addDays(from, 1)) });
+    }
+    // If both 'from' and 'to' are selected
+    else if (from && to) {
+      // Ensure 'from' is always before 'to'
+      if (isBefore(to, from)) {
+        [from, to] = [to, from];
+      }
+      // Ensure minimum 1-day range
+      if (isBefore(to, addDays(from, 1))) {
+        to = endOfDay(addDays(from, 1));
+      }
+      setDateRange({ from: startOfDay(from), to: endOfDay(to) });
     }
   };
 
@@ -141,13 +98,12 @@ const RentDate: React.FC<RentDateProps> = ({
           <div className="lg:divide-x-2 flex gap-6 md:gap-0 flex-wrap justify-center">
             <div className="flex flex-col relative gap-4 px-5 sm:px-10 xl:mb-0 mb-6">
               <span className="font-semibold">Locations</span>
-
               <Select onValueChange={setSelectedCity}>
                 <SelectTrigger>
                   <div className="flex gap-4 items-center">
                     <SelectValue
                       placeholder="Select Location"
-                      className="text-sm font-light "
+                      className="text-sm font-light"
                     />
                     <FaChevronDown />
                   </div>
@@ -164,8 +120,8 @@ const RentDate: React.FC<RentDateProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex flex-col gap-4 sm:px-10 px-5  xl:mb-0 mb-6">
-              <span className="font-semibold ">Pickup and Return Date</span>
+            <div className="flex flex-col gap-4 sm:px-10 px-5 xl:mb-0 mb-6">
+              <span className="font-semibold">Pickup and Return Date</span>
               <div className="flex gap-4 items-center">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -192,44 +148,6 @@ const RentDate: React.FC<RentDateProps> = ({
                       onSelect={handleDateSelect}
                       numberOfMonths={2}
                     />
-                    <div className="grid grid-cols-2 gap-2 p-3 border-t border-border">
-                      <div>
-                        <label
-                          htmlFor="start-time"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Start Time
-                        </label>
-                        <div className="relative">
-                          <Input
-                            type="time"
-                            id="start-time"
-                            value={startTime}
-                            onChange={(e) => handleTimeChange(e, true)}
-                            className="pl-8"
-                          />
-                          <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="end-time"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          End Time
-                        </label>
-                        <div className="relative">
-                          <Input
-                            type="time"
-                            id="end-time"
-                            value={endTime}
-                            onChange={(e) => handleTimeChange(e, false)}
-                            className="pl-8"
-                          />
-                          <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        </div>
-                      </div>
-                    </div>
                   </PopoverContent>
                 </Popover>
               </div>

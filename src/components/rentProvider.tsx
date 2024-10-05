@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 const RentProvider = ({ price }: { price: string }) => {
   // Form state
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
+    from: addDays(new Date(), 2),
+    to: addDays(new Date(), 9),
   });
   const [startTime, setStartTime] = useState<string>("09:00");
   const [endTime, setEndTime] = useState<string>("17:00");

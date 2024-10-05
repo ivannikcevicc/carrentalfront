@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import SettingsNav from "@/components/settingsNav";
+import SettingsNav from "@/components/SettingsNav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import React from "react";

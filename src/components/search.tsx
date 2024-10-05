@@ -41,8 +41,8 @@ const MONTENEGRO_COUNTRY_CODE = "ME";
 
 const Search = () => {
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
+    from: addDays(new Date(), 2),
+    to: addDays(new Date(), 9),
   });
 
   const [startTime, setStartTime] = React.useState<string>("09:00");
