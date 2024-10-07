@@ -19,7 +19,7 @@ export default async function CarsPage({
     max_price: searchParams.max_price
       ? parseInt(searchParams.max_price as string)
       : undefined,
-    is_available: searchParams.is_available === "true",
+    is_available: searchParams.is_available === "1",
     status: searchParams.status as string,
   };
 

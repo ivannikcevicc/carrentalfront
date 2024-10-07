@@ -26,6 +26,24 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  const url = request.nextUrl.clone();
+  const { pathname, searchParams } = url;
+
+  // If we're not on the /cars route and there are search params
+  if (pathname !== "/cars" && searchParams.toString()) {
+    url.pathname = "/cars";
+    return NextResponse.redirect(url);
+  }
+
+  // If we're leaving the /cars route, clear the search params
+  if (
+    pathname !== "/cars" &&
+    request.headers.get("referer")?.includes("/cars")
+  ) {
+    searchParams.forEach((_, key) => searchParams.delete(key));
+    return NextResponse.rewrite(url);
+  }
+
   // For non-protected routes, just pass through
   return NextResponse.next();
 }

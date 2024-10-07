@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Slider } from "@/components/ui/slider";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 const filterItems = [
   {
@@ -63,23 +64,39 @@ export function SearchForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      type: searchParams.get("type")?.split(",") || ["suv"],
-      capacity: searchParams.get("capacity")?.split(",") || [
-        "2Person",
-        "8orMore",
-      ],
-      brand: searchParams.get("make")?.split(",") || ["bmw", "volkswagen"],
+      type: searchParams.get("type")?.split(",") || [],
+      capacity: searchParams.get("capacity")?.split(",") || [],
+      brand: searchParams.get("make")?.split(",") || [],
       price: parseInt(searchParams.get("max_price") || "100"),
-      is_available: searchParams.get("is_available") === "true",
+      is_available: searchParams.get("is_available") === "1",
     },
   });
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      const params = new URLSearchParams(searchParams);
+      if (value.type?.length) params.set("type", value.type.join(","));
+      else params.delete("type");
+      if (value.capacity?.length)
+        params.set("capacity", value.capacity.join(","));
+      else params.delete("capacity");
+      if (value.brand?.length) params.set("make", value.brand.join(","));
+      else params.delete("make");
+      params.set("max_price", value.price?.toString() || "");
+      params.set("is_available", value.is_available ? "1" : "0");
+
+      router.push(`/cars?${params.toString()}`, { scroll: false });
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, router, searchParams]);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const params = new URLSearchParams(searchParams);
     if (data.type.length) params.set("type", data.type.join(","));
     if (data.brand.length) params.set("make", data.brand.join(","));
     params.set("max_price", data.price.toString());
-    params.set("is_available", data.is_available ? "true" : "false");
+    params.set("is_available", data.is_available ? "1" : "0");
 
     router.push(`/cars?${params.toString()}`);
   }

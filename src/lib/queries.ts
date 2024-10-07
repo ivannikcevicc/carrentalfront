@@ -7,13 +7,17 @@ export async function getVehicles(filters: FilterParams = {}) {
 
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined) {
-        queryParams.append(key, value.toString());
+        if (key === "is_available") {
+          queryParams.append(key, value ? "1" : "0");
+        } else {
+          queryParams.append(key, value.toString());
+        }
       }
     });
 
     // Ensure is_available is always included in the query
     if (!queryParams.has("is_available")) {
-      queryParams.append("is_available", "false");
+      queryParams.append("is_available", "0");
     }
 
     const result = await get(`/vehicles?${queryParams.toString()}`);
