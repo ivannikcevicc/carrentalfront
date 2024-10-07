@@ -41,7 +41,7 @@ export const httpClient = async <T>(
     });
     return response.data;
   } catch (error) {
-    console.error("HTTP request failed:", error);
+    console.error("HTTP request failed");
     throw error;
   }
 };

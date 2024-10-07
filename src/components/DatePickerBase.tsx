@@ -16,35 +16,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { City } from "country-state-city";
-import { FaChevronDown } from "react-icons/fa";
 import { DatePickerProps } from "@/lib/types";
 
-const MONTENEGRO_COUNTRY_CODE = "ME";
 
 const DatePickerBase: React.FC<DatePickerProps> = ({
   dateRange,
   setDateRange,
-  selectedCity,
-  setSelectedCity,
   mode,
   showTimeSelect = false,
   onSubmit,
   submitButtonText,
   price,
 }) => {
-  const [cities] = React.useState(
-    City.getCitiesOfCountry(MONTENEGRO_COUNTRY_CODE) || []
-  );
+
 
   const formatDateRange = () => {
     if (!dateRange?.from || !dateRange?.to) return "Pick a date range";
@@ -125,7 +109,6 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
         //@ts-expect-error Type 'DateTimeRange' is not assignable to type 'DateRange'.
         to: toISO,
       },
-      selectedCity,
     });
   };
 
@@ -134,31 +117,6 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
       <div className="lg:max-w-[1000px] sm:max-w-[90%] md:max-w-[85%] max-w-[95%] bg-white mt-[3rem] mx-auto rounded-lg py-6 pr-6">
         <div className="flex items-center flex-wrap gap-6 md:gap-0 justify-around">
           <div className="lg:divide-x-2 flex gap-6 md:gap-0 flex-wrap justify-center">
-            {/* Location Selection */}
-            <div className="flex flex-col relative gap-4 px-5 sm:px-10 xl:mb-0 mb-6">
-              <span className="font-semibold">Locations</span>
-              <Select onValueChange={setSelectedCity} value={selectedCity}>
-                <SelectTrigger>
-                  <div className="flex gap-4 items-center">
-                    <SelectValue
-                      placeholder="Select Location"
-                      className="text-sm font-light"
-                    />
-                    <FaChevronDown />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Cities in Montenegro</SelectLabel>
-                    {cities.map((city) => (
-                      <SelectItem key={city.name} value={city.name}>
-                        {city.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* Date Selection */}
             <div className="flex flex-col gap-4 sm:px-10 px-5 xl:mb-0 mb-6">

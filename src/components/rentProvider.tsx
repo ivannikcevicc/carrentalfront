@@ -12,9 +12,6 @@ const RentProvider: React.FC<RentProviderProps> = ({ price }) => {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(
     undefined
   );
-  const [selectedCity, setSelectedCity] = useState<string | undefined>(
-    undefined
-  );
 
   const handleRent = (data: {
     dateRange: DateTimeRange | undefined;
@@ -28,8 +25,6 @@ const RentProvider: React.FC<RentProviderProps> = ({ price }) => {
       mode="rent"
       dateRange={dateRange}
       setDateRange={setDateRange}
-      selectedCity={selectedCity}
-      setSelectedCity={setSelectedCity}
       onSubmit={handleRent}
       showTimeSelect={true}
       price={price}

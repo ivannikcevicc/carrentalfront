@@ -1,16 +1,27 @@
 import { get, post } from "@/lib/httpClient";
-import { Car, Review } from "@/lib/types";
-import { getSession } from "./auth";
+import { Car, FilterParams, Review } from "@/lib/types";
 
-export async function getVehicles() {
+export async function getVehicles(filters: FilterParams = {}) {
   try {
-    const result = await get("/vehicles");
+    const queryParams = new URLSearchParams();
 
-    //@ts-expect-error aaa
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.append(key, value.toString());
+      }
+    });
 
+    // Ensure is_available is always included in the query
+    if (!queryParams.has("is_available")) {
+      queryParams.append("is_available", "false");
+    }
+
+    const result = await get(`/vehicles?${queryParams.toString()}`);
+
+    //@ts-expect-error temporary
     return result.data as Car[];
   } catch (error) {
-    console.error("Failed to fetch vehicles:", error);
+    console.error("Failed to fetch vehicles:", error.response.data.errors);
     throw error;
   }
 }
@@ -21,7 +32,7 @@ export async function getVehicle(id: string) {
 
     return result as Car;
   } catch (error) {
-    console.error("Failed to fetch vehicles:", error);
+    console.error("Failed to fetch vehicles:", error.response.data.errors);
     throw error;
   }
 }
@@ -32,7 +43,7 @@ export async function getReviewsByCarId(id: string) {
 
     return result as Review[];
   } catch (error) {
-    console.error("Failed to fetch vehicles:", error);
+    console.error("Failed to fetch vehicles:", error.response.data.errors);
     throw error;
   }
 }
@@ -50,7 +61,7 @@ export async function createReview(data: {
     const result = await post(`/reviews`, data);
     return result;
   } catch (error) {
-    console.error("Failed to create a review:", error);
+    console.error("Failed to create a review:", error.response.data.errors);
     throw error;
   }
 }

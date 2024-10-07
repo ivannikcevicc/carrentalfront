@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Slider } from "@/components/ui/slider";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const filterItems = [
   {
@@ -52,23 +53,36 @@ const FormSchema = z.object({
   capacity: z.array(z.string()),
   brand: z.array(z.string()),
   price: z.number().min(0).max(100),
+  is_available: z.boolean().default(false),
 });
 
 export function SearchForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      type: ["suv"],
-      capacity: ["2Person", "8orMore"],
-      brand: ["bmw", "volkswagen"],
-      price: 100,
+      type: searchParams.get("type")?.split(",") || ["suv"],
+      capacity: searchParams.get("capacity")?.split(",") || [
+        "2Person",
+        "8orMore",
+      ],
+      brand: searchParams.get("make")?.split(",") || ["bmw", "volkswagen"],
+      price: parseInt(searchParams.get("max_price") || "100"),
+      is_available: searchParams.get("is_available") === "true",
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-  }
+    const params = new URLSearchParams(searchParams);
+    if (data.type.length) params.set("type", data.type.join(","));
+    if (data.brand.length) params.set("make", data.brand.join(","));
+    params.set("max_price", data.price.toString());
+    params.set("is_available", data.is_available ? "true" : "false");
 
+    router.push(`/cars?${params.toString()}`);
+  }
   return (
     <Form {...form}>
       <form

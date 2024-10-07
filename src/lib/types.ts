@@ -60,11 +60,20 @@ export interface DateTimeRange extends DateRange {
   endTime?: string;
 }
 
+export interface FilterParams {
+  make?: string;
+  model?: string;
+  type?: string;
+  year?: number;
+  min_price?: number;
+  max_price?: number;
+  is_available?: boolean;
+  status?: string;
+}
+
 export interface DatePickerProps {
   dateRange: DateTimeRange | undefined;
   setDateRange: React.Dispatch<React.SetStateAction<DateTimeRange | undefined>>;
-  selectedCity: string | undefined;
-  setSelectedCity: React.Dispatch<React.SetStateAction<string | undefined>>;
   mode: "search" | "rent";
   showTimeSelect?: boolean;
   onSubmit?: (data: {

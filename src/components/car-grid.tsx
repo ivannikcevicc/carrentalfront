@@ -1,17 +1,17 @@
 import React from "react";
 import Card from "./card";
-import { getVehicles } from "@/lib/queries";
+
+import { Car } from "@/lib/types";
 
 const CarGrid = async ({
   slim,
   filter,
+  cars,
 }: {
   slim?: boolean;
   filter?: boolean;
+  cars: Car[];
 }) => {
-  // Wait for the Promise to resolve
-  const cars = await getVehicles();
-
   // Now that we have the cars, we can safely filter them
   const displayedCars = filter ? cars.slice(0, 4) : cars;
 

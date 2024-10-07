@@ -5,9 +5,11 @@ import Link from "next/link";
 import { getUserInfo } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Testimonials from "@/components/testimonials";
+import { getVehicles } from "@/lib/queries";
 
 export default async function Home() {
   const user = await getUserInfo();
+  const cars = await getVehicles();
   if (!user) {
     console.log(user);
     redirect("/login");
@@ -28,7 +30,7 @@ export default async function Home() {
           View All
         </Link>
       </div>
-      <CarGrid filter={true} />
+      <CarGrid filter={true} cars={cars} />
       <Testimonials />
     </>
   );
