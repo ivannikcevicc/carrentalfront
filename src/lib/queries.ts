@@ -7,7 +7,11 @@ export async function getVehicles(filters: FilterParams = {}) {
 
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined) {
-        if (key === "is_available") {
+        if (Array.isArray(value)) {
+          value.forEach((item) =>
+            queryParams.append(`${key}[]`, item.toString())
+          );
+        } else if (key === "is_available") {
           queryParams.append(key, value ? "1" : "0");
         } else {
           queryParams.append(key, value.toString());
@@ -20,11 +24,15 @@ export async function getVehicles(filters: FilterParams = {}) {
       queryParams.append("is_available", "0");
     }
 
-    const result = await get(`/vehicles?${queryParams.toString()}`);
+    console.log("Filters:", filters);
+    console.log("Query params:", queryParams.toString());
 
-    //@ts-expect-error temporary
+    const result = await get(`/vehicles?${queryParams.toString()}`);
+    console.log("Fetched from:", `/vehicles?${queryParams.toString()}`);
+    //@ts-expect-error temp
     return result.data as Car[];
   } catch (error) {
+    //@ts-expect-error temp
     console.error("Failed to fetch vehicles:", error.response.data.errors);
     throw error;
   }
@@ -36,7 +44,11 @@ export async function getVehicle(id: string) {
 
     return result as Car;
   } catch (error) {
-    console.error("Failed to fetch vehicles:", error.response.data.errors);
+    if (error instanceof Error) {
+      console.error("Failed to fetch vehicles:", error.message);
+    } else {
+      console.error("Failed to fetch vehicles:", String(error));
+    }
     throw error;
   }
 }
@@ -47,7 +59,11 @@ export async function getReviewsByCarId(id: string) {
 
     return result as Review[];
   } catch (error) {
-    console.error("Failed to fetch vehicles:", error.response.data.errors);
+    if (error instanceof Error) {
+      console.error("Failed to fetch vehicles:", error.message);
+    } else {
+      console.error("Failed to fetch vehicles:", String(error));
+    }
     throw error;
   }
 }
@@ -65,7 +81,11 @@ export async function createReview(data: {
     const result = await post(`/reviews`, data);
     return result;
   } catch (error) {
-    console.error("Failed to create a review:", error.response.data.errors);
+    if (error instanceof Error) {
+      console.error("Failed to fetch vehicles:", error.message);
+    } else {
+      console.error("Failed to fetch vehicles:", String(error));
+    }
     throw error;
   }
 }

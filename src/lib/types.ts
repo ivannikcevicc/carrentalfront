@@ -61,14 +61,11 @@ export interface DateTimeRange extends DateRange {
 }
 
 export interface FilterParams {
-  make?: string;
-  model?: string;
-  type?: string;
-  year?: number;
-  min_price?: number;
+  type?: string[];
+  seating_capacity?: string[];
+  make?: string[];
   max_price?: number;
   is_available?: boolean;
-  status?: string;
 }
 
 export interface DatePickerProps {
