@@ -9,6 +9,15 @@ import { SearchForm } from "@/components/forms/search-form";
 import Search from "@/components/search";
 import { getUserInfo } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { SlidersHorizontal, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Pagination,
   PaginationContent,
@@ -22,6 +31,7 @@ import {
 export default function CarsPage() {
   const [cars, setCars] = useState<PaginatedResponse<Car> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -48,8 +58,6 @@ export default function CarsPage() {
     try {
       const result = await getVehicles(filters);
       if (result.data.length === 0 && result.meta.current_page > 1) {
-        // If we're on a page with no results, and it's not the first page,
-        // redirect to the first page silently
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", "1");
         router.push(`/cars?${params.toString()}`, { scroll: false });
@@ -58,7 +66,6 @@ export default function CarsPage() {
       }
     } catch (error) {
       console.error("Failed to fetch cars:", error);
-      // Silently redirect to the first page in case of an error
       const params = new URLSearchParams(searchParams.toString());
       params.set("page", "1");
       router.push(`/cars?${params.toString()}`, { scroll: false });
@@ -115,12 +122,51 @@ export default function CarsPage() {
     return items;
   };
 
+  // Get the count of active filters
+  const getActiveFilterCount = () => {
+    let count = 0;
+    count += searchParams.getAll("type[]").length;
+    count += searchParams.getAll("seating_capacity[]").length;
+    count += searchParams.getAll("make[]").length;
+    if (searchParams.get("max_price")) count++;
+    if (searchParams.get("is_available") === "1") count++;
+    return count;
+  };
+
   return (
     <div className="flex bg-light">
-      <aside className="w-[25%]">
-        <SearchForm />
+      {/* Desktop sidebar */}
+      <aside className="hidden md:block w-[25%]">
+        <SearchForm onClose={() => setIsOpen(false)} />
       </aside>
-      <main className="w-[75%] py-6">
+
+      {/* Mobile sheet */}
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild className="md:hidden fixed bottom-4 left-4 z-50">
+          <Button className="rounded-full px-4 py-2 bg-primary shadow-lg">
+            <SlidersHorizontal className="h-4 w-4 mr-2" />
+            Filters{" "}
+            {getActiveFilterCount() > 0 && `(${getActiveFilterCount()})`}
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[85%] sm:w-[350px] pt-10">
+          <SheetHeader>
+            <SheetTitle className="flex justify-between items-center">
+              Filters
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </SheetTitle>
+          </SheetHeader>
+          <SearchForm onClose={() => setIsOpen(false)} />
+        </SheetContent>
+      </Sheet>
+
+      <main className="flex-1 md:w-[75%] py-6 px-4 md:px-6">
         <Search />
         {loading ? (
           <div className="text-3xl text-center mt-[3rem]">Loading...</div>

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/popover";
 import { DatePickerProps } from "@/lib/types";
 
-
 const DatePickerBase: React.FC<DatePickerProps> = ({
   dateRange,
   setDateRange,
@@ -28,8 +27,6 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
   submitButtonText,
   price,
 }) => {
-
-
   const formatDateRange = () => {
     if (!dateRange?.from || !dateRange?.to) return "Pick a date range";
 
@@ -117,7 +114,6 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
       <div className="lg:max-w-[1000px] sm:max-w-[90%] md:max-w-[85%] max-w-[95%] bg-white mt-[3rem] mx-auto rounded-lg py-6 pr-6">
         <div className="flex items-center flex-wrap gap-6 md:gap-0 justify-around">
           <div className="lg:divide-x-2 flex gap-6 md:gap-0 flex-wrap justify-center">
-
             {/* Date Selection */}
             <div className="flex flex-col gap-4 sm:px-10 px-5 xl:mb-0 mb-6">
               <span className="font-semibold">Pickup and Return Date</span>
@@ -160,7 +156,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
                             <Input
                               type="time"
                               id="start-time"
-                              value={dateRange?.startTime || "09:00"}
+                              value={dateRange?.startTime || "00:00"}
                               onChange={(e) =>
                                 handleTimeChange(e.target.value, true)
                               }
@@ -180,7 +176,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
                             <Input
                               type="time"
                               id="end-time"
-                              value={dateRange?.endTime || "17:00"}
+                              value={dateRange?.endTime || "00:00"}
                               onChange={(e) =>
                                 handleTimeChange(e.target.value, false)
                               }

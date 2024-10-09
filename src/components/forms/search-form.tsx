@@ -55,7 +55,11 @@ const FormSchema = z.object({
   is_available: z.boolean().default(false),
 });
 
-export function SearchForm() {
+interface SearchFormProps {
+  onClose?: () => void;
+}
+
+export function SearchForm({ onClose }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -69,7 +73,10 @@ export function SearchForm() {
       is_available: searchParams.get("is_available") === "1",
     },
   });
+
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
     const subscription = form.watch((value) => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -96,10 +103,24 @@ export function SearchForm() {
       params.set("is_available", value.is_available ? "1" : "0");
 
       router.push(`/cars?${params.toString()}`, { scroll: false });
+
+      // Clear any existing timeout
+      if (timeout) clearTimeout(timeout);
+
+      // Set a new timeout to close the sheet after filters are applied
+      // Only on mobile screens
+      if (window.innerWidth < 768 && onClose) {
+        timeout = setTimeout(() => {
+          onClose();
+        }, 500); // Add a small delay for better UX
+      }
     });
 
-    return () => subscription.unsubscribe();
-  }, [form, router, searchParams]);
+    return () => {
+      subscription.unsubscribe();
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [form, router, searchParams, onClose]);
 
   return (
     <Form {...form}>
