@@ -1,12 +1,24 @@
-import { RegisterForm } from "@/components/forms/registerForm";
-import React from "react";
+"use client";
 
-const page = () => {
+import { RegisterForm } from "@/components/forms/registerForm";
+import React, { useEffect, useState } from "react";
+
+const Page = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <RegisterForm />
-    </div>
+    <>
+      {isClient ? (
+        <div className="w-full h-screen flex items-center justify-center">
+          <RegisterForm />
+        </div>
+      ) : null}
+    </>
   );
 };
 
-export default page;
+export default Page;

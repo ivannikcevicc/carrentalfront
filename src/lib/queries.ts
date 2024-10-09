@@ -33,7 +33,7 @@ export async function getVehicles(filters: FilterParams = {}) {
     return result.data as Car[];
   } catch (error) {
     //@ts-expect-error temp
-    console.error("Failed to fetch vehicles:", error.response.data.errors);
+    console.error("Failed to fetch vehicles:", error.response);
     throw error;
   }
 }

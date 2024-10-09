@@ -2,11 +2,18 @@ import { getVehicles } from "@/lib/queries";
 import CarGrid from "@/components/car-grid";
 import { SearchForm } from "@/components/forms/search-form";
 import Search from "@/components/search";
+import { getUserInfo } from "@/lib/auth";
+import { redirect } from "next/navigation";
 export default async function CarsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const user = await getUserInfo();
+  if (!user) {
+    redirect("/login");
+  }
+
   const filters = {
     type: Array.isArray(searchParams["type[]"])
       ? searchParams["type[]"]

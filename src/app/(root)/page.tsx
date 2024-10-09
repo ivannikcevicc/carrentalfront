@@ -9,11 +9,12 @@ import { getVehicles } from "@/lib/queries";
 
 export default async function Home() {
   const user = await getUserInfo();
-  const cars = await getVehicles();
-  if (!user) {
-    console.log(user);
-    redirect("/login");
+  if(!user) {
+    redirect("/login")
   }
+  const cars = await getVehicles();
+
+
 
   return (
     <>

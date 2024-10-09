@@ -1,12 +1,24 @@
-import { LoginForm } from "@/components/forms/loginForm";
-import React from "react";
+"use client";
 
-const page = async () => {
+import { LoginForm } from "@/components/forms/loginForm";
+import React, { useEffect, useState } from "react";
+
+const Page = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <LoginForm />
-    </div>
+    <>
+      {isClient ? (
+        <div className="w-full h-screen flex items-center justify-center">
+          <LoginForm />
+        </div>
+      ) : null}
+    </>
   );
 };
 
-export default page;
+export default Page;
