@@ -1,9 +1,8 @@
 import React from "react";
 import Card from "./card";
-
 import { Car } from "@/lib/types";
 
-const CarGrid = async ({
+const CarGrid = ({
   slim,
   filter,
   cars,

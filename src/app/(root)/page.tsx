@@ -9,12 +9,10 @@ import { getVehicles } from "@/lib/queries";
 
 export default async function Home() {
   const user = await getUserInfo();
-  if(!user) {
-    redirect("/login")
+  if (!user) {
+    redirect("/login");
   }
-  const cars = await getVehicles();
-
-
+  const carsResponse = await getVehicles({ per_page: 4 });
 
   return (
     <>
@@ -31,7 +29,7 @@ export default async function Home() {
           View All
         </Link>
       </div>
-      <CarGrid filter={true} cars={cars} />
+      <CarGrid filter={true} cars={carsResponse.data} />
       <Testimonials />
     </>
   );

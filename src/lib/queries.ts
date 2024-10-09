@@ -1,18 +1,24 @@
 import { get, post } from "@/lib/httpClient";
-import { Car, FilterParams, Review } from "@/lib/types";
+import { Car, FilterParams, PaginatedResponse, Review } from "@/lib/types";
 
-export async function getVehicles(filters: FilterParams = {}) {
+export async function getVehicles(
+  filters: FilterParams = {}
+): Promise<PaginatedResponse<Car>> {
   try {
     const queryParams = new URLSearchParams();
 
     Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined) {
+      if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
           value.forEach((item) =>
             queryParams.append(`${key}[]`, item.toString())
           );
         } else if (key === "is_available") {
           queryParams.append(key, value ? "1" : "0");
+        } else if (key === "start_date" || key === "end_date") {
+          if (value !== "") {
+            queryParams.append(key, value);
+          }
         } else {
           queryParams.append(key, value.toString());
         }
@@ -24,16 +30,23 @@ export async function getVehicles(filters: FilterParams = {}) {
       queryParams.append("is_available", "0");
     }
 
+    // Remove start_date and end_date if they are null or empty strings
+    if (!filters.start_date || filters.start_date === "") {
+      queryParams.delete("start_date");
+    }
+    if (!filters.end_date || filters.end_date === "") {
+      queryParams.delete("end_date");
+    }
+
     console.log("Filters:", filters);
     console.log("Query params:", queryParams.toString());
 
-    const result = await get(`/vehicles?${queryParams.toString()}`);
+    const response = await get(`/vehicles?${queryParams.toString()}`);
     console.log("Fetched from:", `/vehicles?${queryParams.toString()}`);
-    //@ts-expect-error temp
-    return result.data as Car[];
+    return response as PaginatedResponse<Car>;
   } catch (error) {
-    //@ts-expect-error temp
-    console.error("Failed to fetch vehicles:", error.response);
+    //@ts-expect-error expected
+    console.error("Failed to fetch vehicles:", error.response?.data?.message);
     throw error;
   }
 }
