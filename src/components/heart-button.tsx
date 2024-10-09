@@ -13,6 +13,7 @@ export const HeartButton = ({
   size?: number;
 }) => {
   const [hasFavorited, toggleFavorite] = useState(isFavorite);
+  console.log(carId);
 
   // use CarID to toggle favorite
 
