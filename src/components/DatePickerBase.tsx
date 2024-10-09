@@ -211,13 +211,16 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
       </div>
 
       {mode === "rent" && price && (
-        <div className="flex justify-between font-semibold flex-wrap text-[22px] mt-10 text-gray-400 gap-2">
+        <div className="flex justify-between font-semibold flex-wrap text-[18px] sm:text-[22px] mt-10 text-gray-400 gap-3">
           <div>
-            <span className="text-[40px] text-black">${price}/</span> day
+            <span className="text-[30px] sm:text-[40px] text-black">
+              ${price}/
+            </span>{" "}
+            day
           </div>
           <Button
             type="submit"
-            className="rounded-sm text-[20px] px-10 py-8 font-semibold"
+            className="rounded-sm text-[16px] sm:text-[20px] px-8 py-6 sm:px-10 sm:py-8 font-semibold"
           >
             {submitButtonText || "Rent Now"}
           </Button>

@@ -125,7 +125,7 @@ const ReviewProvider = ({ reviews }: { reviews: ReviewType[] }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between m-4">
+      <div className="flex sm:items-center sm:flex-row flex-col gap-5 items-start justify-between m-4">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
