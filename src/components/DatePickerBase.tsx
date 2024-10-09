@@ -1,9 +1,5 @@
 "use client";
-// types/date-picker.ts
 
-import { DateRange } from "react-day-picker";
-
-// components/DatePickerBase.tsx
 import * as React from "react";
 import { format, addDays, startOfDay, endOfDay } from "date-fns";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
@@ -17,6 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { DatePickerProps } from "@/lib/types";
+import { DateRange } from "react-day-picker";
 
 const DatePickerBase: React.FC<DatePickerProps> = ({
   dateRange,
@@ -43,15 +40,28 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
       const formattedFrom = format(fromDate, "MMM d, yyyy 'at' h:mm a");
       const formattedTo = format(toDate, "MMM d, yyyy 'at' h:mm a");
 
-      return `${formattedFrom} - ${formattedTo}`;
+      return (
+        <span className="flex flex-col sm:flex-row sm:gap-1 ">
+          <span className="">{formattedFrom}</span>
+          <span className="hidden sm:block">-</span>
+          <span>{formattedTo}</span>
+        </span>
+      );
     }
 
     const formattedFrom = format(fromDate, "MMM d, yyyy");
     const formattedTo = format(toDate, "MMM d, yyyy");
 
-    return `${formattedFrom} - ${formattedTo}`;
+    return (
+      <span className="flex flex-col sm:flex-row sm:gap-1">
+        <span>{formattedFrom}</span>
+        <span className="hidden sm:block">-</span>
+        <span>{formattedTo}</span>
+      </span>
+    );
   };
 
+  // Rest of the component remains the same...
   const handleDateSelect = (range: DateRange | undefined) => {
     if (!range?.from) return;
 
@@ -114,9 +124,10 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
       <div className="lg:max-w-[1000px] sm:max-w-[90%] md:max-w-[85%] max-w-[95%] bg-white mt-[3rem] mx-auto rounded-lg py-6 pr-6">
         <div className="flex items-center flex-wrap gap-6 md:gap-0 justify-around">
           <div className="lg:divide-x-2 flex gap-6 md:gap-0 flex-wrap justify-center">
-            {/* Date Selection */}
             <div className="flex flex-col gap-4 sm:px-10 px-5 xl:mb-0 mb-6">
-              <span className="font-semibold">Pickup and Return Date</span>
+              <span className="font-semibold sm:text-left text-center">
+                Pickup and Return Date
+              </span>
               <div className="flex gap-4 items-center">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -124,14 +135,12 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
                       id="date"
                       variant={"outline"}
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal sm:h-9 h-12",
                         !dateRange && "text-muted-foreground"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      <span className="sm:text-sm text-xs">
-                        {formatDateRange()}
-                      </span>
+                      {formatDateRange()}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
