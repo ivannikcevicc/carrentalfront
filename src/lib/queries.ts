@@ -1,5 +1,11 @@
-import { get, post } from "@/lib/httpClient";
-import { Car, FilterParams, PaginatedResponse, Review } from "@/lib/types";
+import { del, get, post } from "@/lib/httpClient";
+import {
+  Car,
+  FilterParams,
+  PaginatedResponse,
+  Reservation,
+  Review,
+} from "@/lib/types";
 
 export async function getVehicles(
   filters: FilterParams = {}
@@ -116,6 +122,34 @@ export async function createReservation(data: {
       console.error("Failed to create reservation:", error.message);
     } else {
       console.error("Failed to create reservation:", String(error));
+    }
+    throw error;
+  }
+}
+
+export async function getReservations() {
+  try {
+    const result = await get(`/reservations`);
+    return result as Reservation[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to get reservations:", error.message);
+    } else {
+      console.error("Failed to get reservations:", String(error));
+    }
+    throw error;
+  }
+}
+
+export async function deleteReservation(id: number) {
+  try {
+    const result = await del(`/reservations/${id}`);
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to get reservations:", error.message);
+    } else {
+      console.error("Failed to get reservations:", String(error));
     }
     throw error;
   }

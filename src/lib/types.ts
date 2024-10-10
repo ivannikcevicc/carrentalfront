@@ -23,8 +23,10 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  avatar: string | null;
   email_verified_at: string | null;
-  is_admin: number;
+  is_admin: boolean;
+  is_blocked: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -107,4 +109,18 @@ export interface PaginatedResponse<T> {
     to: number;
     total: number;
   };
+}
+
+export interface Reservation {
+  id: number;
+  user_id: number;
+  vehicle_id: number;
+  start_date: string;
+  end_date: string;
+  total_price: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  user: User;
+  vehicle: Car;
 }

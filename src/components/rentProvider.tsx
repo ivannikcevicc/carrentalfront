@@ -5,6 +5,7 @@ import DatePickerBase from "./DatePickerBase";
 import { useState } from "react";
 import { createReservation } from "@/lib/queries";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface RentProviderProps {
   price: string;
@@ -12,16 +13,14 @@ interface RentProviderProps {
 }
 
 const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
+  const router = useRouter();
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(
     undefined
   );
 
   const handleRent = async (data: { dateRange: DateTimeRange | undefined }) => {
-    console.log("rent");
     if (!data.dateRange?.from || !data.dateRange?.to) {
-      console.log("rent2");
       toast.error("Please select a valid date range");
-      console.log("rent3");
       return;
     }
 
@@ -38,6 +37,7 @@ const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
       });
 
       toast.success("Reservation created successfully!");
+      router.refresh();
       return response;
     } catch (err) {
       console.error(err);
