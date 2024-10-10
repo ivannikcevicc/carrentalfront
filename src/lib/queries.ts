@@ -102,3 +102,21 @@ export async function createReview(data: {
     throw error;
   }
 }
+
+export async function createReservation(data: {
+  vehicle_id: number;
+  start_date: Date;
+  end_date: Date;
+}) {
+  try {
+    const result = await post(`/reservations`, data);
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to create reservation:", error.message);
+    } else {
+      console.error("Failed to create reservation:", String(error));
+    }
+    throw error;
+  }
+}

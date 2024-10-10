@@ -15,7 +15,7 @@ export default async function Home() {
   const carsResponse = await getVehicles({ per_page: 4 });
 
   return (
-    <>
+    <div className="background-light">
       <div>
         <Landing />
         <Search />
@@ -31,6 +31,6 @@ export default async function Home() {
       </div>
       <CarGrid filter={true} cars={carsResponse.data} />
       <Testimonials />
-    </>
+    </div>
   );
 }

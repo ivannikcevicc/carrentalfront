@@ -6,6 +6,7 @@ import RentProvider from "@/components/rentProvider";
 import { getReviewsByCarId, getVehicle } from "@/lib/queries";
 import ReviewChart from "@/components/ReviewChart";
 import ReviewProvider from "@/components/ReviewProvider";
+import RecommendVehicles from "@/components/RecommendVehicles";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
@@ -58,16 +59,16 @@ const Page = async ({ params }: { params: { carId: string } }) => {
                   key={index}
                   className="w-full flex justify-between items-center"
                 >
-                  <span className="text-gray-500  sm:text-[22px] text-[14px] sm:text-base">
+                  <span className="text-gray-500  sm:text-[22px] text-[14px]">
                     {detail.label}
                   </span>
-                  <span className="font-semibold sm:text-[22px] text-[14px] sm:text-base">
+                  <span className="font-semibold sm:text-[22px] text-[14px]">
                     {detail.value}
                   </span>
                 </div>
               ))}
             </div>
-            <RentProvider price={car.price_per_day} />
+            <RentProvider price={car.price_per_day} carId={car.id} />
           </div>
         </main>
       </div>
@@ -76,7 +77,9 @@ const Page = async ({ params }: { params: { carId: string } }) => {
           <ReviewChart />
           <ReviewProvider reviews={reviews} />
         </div>
-        <div className="lg:w-[53%] w-full  flex flex-col">aaaa</div>
+        <div className="lg:w-[53%] w-full  flex flex-col">
+          <RecommendVehicles type={car.type} currentCarId={carId} />
+        </div>
       </div>
     </>
   );
