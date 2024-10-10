@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { Session, User } from "@/lib/types";
-import { post } from "@/lib/httpClient";
+import { get, post } from "@/lib/httpClient";
 import axios from "axios";
 
 export async function login(
@@ -103,13 +103,17 @@ export async function getSession(): Promise<Session | null> {
 export async function getUserInfo(): Promise<{
   name: string;
   email: string;
+  avatar: string | null;
 } | null> {
-  const session = await getSession();
-  if (session) {
-    return {
-      name: session.user.name,
-      email: session.user.email,
-    };
+  try {
+    const response = await get<{
+      name: string;
+      email: string;
+      avatar: string | null;
+    }>("/user");
+    return response;
+  } catch (error) {
+    console.error("Failed to get user info:", error);
+    return null;
   }
-  return null;
 }

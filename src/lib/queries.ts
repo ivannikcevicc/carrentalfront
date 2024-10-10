@@ -5,7 +5,9 @@ import {
   PaginatedResponse,
   Reservation,
   Review,
+  UpdateUserData,
 } from "@/lib/types";
+import { Session, User } from "@/lib/types";
 
 export async function getVehicles(
   filters: FilterParams = {}
@@ -150,6 +152,46 @@ export async function deleteReservation(id: number) {
       console.error("Failed to get reservations:", error.message);
     } else {
       console.error("Failed to get reservations:", String(error));
+    }
+    throw error;
+  }
+}
+
+export async function updateUser(data: UpdateUserData) {
+  try {
+    // Create FormData instance
+    const formData = new FormData();
+
+    // Append regular fields
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+
+    // Append avatar file if it exists
+    if (data.avatar instanceof File) {
+      formData.append("avatar", data.avatar);
+    }
+
+    // Use existing post function with FormData and custom config
+    const result = await post<{ user: User }>("/user/update", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    // Update the session data
+    const sessionData = localStorage.getItem("session");
+    if (sessionData) {
+      const session: Session = JSON.parse(sessionData);
+      session.user = result.user;
+      localStorage.setItem("session", JSON.stringify(session));
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to update user:", error.message);
+    } else {
+      console.error("Failed to update user:", String(error));
     }
     throw error;
   }

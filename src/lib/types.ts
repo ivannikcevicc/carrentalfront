@@ -31,6 +31,12 @@ export interface User {
   updated_at: string;
 }
 
+export type UpdateUserData = {
+  name: string;
+  email: string;
+  avatar?: File;
+};
+
 export interface Session {
   user: User;
   token: string;
