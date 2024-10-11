@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { Session, User } from "@/lib/types";
-import { get, post } from "@/lib/httpClient";
+import { post } from "@/lib/httpClient";
 import axios from "axios";
 
 export async function login(
@@ -105,19 +105,29 @@ export async function getUserInfo(): Promise<{
   email: string;
   avatar: string | null;
 } | null> {
-  try {
-    const response = await get<{
-      name: string;
-      email: string;
-      avatar: string | null;
-    }>("/user");
-    return {
-      name: response.name,
-      email: response.email,
-      avatar: `${process.env.NEXT_PUBLIC_BASE_URL}/storage/${response.avatar}`,
-    };
-  } catch (error) {
-    console.error("Failed to get user info:", error);
+  // Check if we're in a server context
+  if (typeof window === "undefined") {
+    try {
+      const cookieStore = cookies();
+      const sessionCookie = cookieStore.get("session");
+      if (!sessionCookie) return null;
+
+      const session = JSON.parse(sessionCookie.value);
+      // Here you might want to verify the session or make an API call
+      // For now, we'll just return the user info from the session
+      return {
+        name: session.user.name,
+        email: session.user.email,
+        avatar: session.user.avatar
+          ? `${process.env.NEXT_PUBLIC_BASE_URL}/storage/${session.user.avatar}`
+          : null,
+      };
+    } catch (error) {
+      console.error("Failed to get user info:", error);
+      return null;
+    }
+  } else {
+    // Client-side, return null or handle differently
     return null;
   }
 }
