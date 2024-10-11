@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { getSession } from "./auth";
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "https://lucic.tech/api",
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

@@ -111,7 +111,11 @@ export async function getUserInfo(): Promise<{
       email: string;
       avatar: string | null;
     }>("/user");
-    return response;
+    return {
+      name: response.name,
+      email: response.email,
+      avatar: `${process.env.NEXT_PUBLIC_BASE_URL}/storage/${response.avatar}`,
+    };
   } catch (error) {
     console.error("Failed to get user info:", error);
     return null;
