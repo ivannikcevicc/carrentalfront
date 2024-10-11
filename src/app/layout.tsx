@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import Loader from "@/components/loader";
 import { Toaster } from "react-hot-toast";
 
+export const dynamic = "force-dynamic";
+
 const PlusJakartaSans = localFont({
   src: "./fonts/PlusJakartaSans-VariableFont_wght.ttf",
   variable: "--font-jakarta-sans",

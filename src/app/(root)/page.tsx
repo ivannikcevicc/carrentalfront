@@ -7,8 +7,6 @@ import { redirect } from "next/navigation";
 import Testimonials from "@/components/testimonials";
 import { getVehicles } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const user = await getUserInfo();
   if (!user) {
