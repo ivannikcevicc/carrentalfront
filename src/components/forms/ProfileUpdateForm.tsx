@@ -55,7 +55,6 @@ const ProfileUpdateForm: React.FC = () => {
   useEffect(() => {
     const loadUserInfo = async () => {
       const userInfo = await getUserInfo();
-      console.log(userInfo);
       if (userInfo) {
         reset({
           name: userInfo.name,
@@ -107,15 +106,17 @@ const ProfileUpdateForm: React.FC = () => {
       }
 
       toast.success("Profile updated successfully!");
-      console.log("Profile updated successfully", response);
       router.refresh();
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(error.message || "Error updating profile");
+        toast.error(
+          //@ts-expect-error expected
+          err?.response?.data?.message ||
+            "Error updating profile. Please try again."
+        );
       } else {
         toast.error("Error updating profile");
       }
-      console.error("Error updating profile:", error);
     }
   };
 

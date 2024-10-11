@@ -4,6 +4,7 @@ import { LoginForm } from "@/components/forms/loginForm";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
+  //Hydration errors
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

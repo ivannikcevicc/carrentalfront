@@ -1,10 +1,12 @@
 import { del, get, post } from "@/lib/httpClient";
 import {
   Car,
+  FavoriteResponse,
   FilterParams,
   PaginatedResponse,
   Reservation,
   Review,
+  ReviewOverview,
   UpdateUserData,
 } from "@/lib/types";
 import { Session, User } from "@/lib/types";
@@ -53,37 +55,50 @@ export async function getVehicles(
     console.log("Fetched from:", `/vehicles?${queryParams.toString()}`);
     return response as PaginatedResponse<Car>;
   } catch (error) {
-    //@ts-expect-error expected
-    console.error("Failed to fetch vehicles:", error.response?.data?.message);
+    console.error("Failed to fetch vehicles:", error);
     throw error;
   }
 }
 
-export async function getVehicle(id: string) {
+export async function getVehicle(id: number) {
   try {
     const result = await get(`/vehicles/${id}`);
 
     return result as Car;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to fetch vehicles:", error.message);
+      console.error("Failed to fetch vehicle:", error);
     } else {
-      console.error("Failed to fetch vehicles:", String(error));
+      console.error("Failed to fetch vehicle:", String(error));
     }
     throw error;
   }
 }
 
-export async function getReviewsByCarId(id: string) {
+export async function getReviewsByCarId(id: number) {
   try {
     const result = await get(`/reviews?vehicle_id=${id}`);
 
     return result as Review[];
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to fetch vehicles:", error.message);
+      console.error("Failed to get reviews:", error);
     } else {
-      console.error("Failed to fetch vehicles:", String(error));
+      console.error("Failed to get reviews:", String(error));
+    }
+    throw error;
+  }
+}
+export async function getReviewsInfoByCarId(id: number) {
+  try {
+    const result = await get(`/reviews/${id}/overview`);
+
+    return result as ReviewOverview;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to get review info:", error);
+    } else {
+      console.error("Failed to get review info:", String(error));
     }
     throw error;
   }
@@ -103,9 +118,9 @@ export async function createReview(data: {
     return result;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to fetch vehicles:", error.message);
+      console.error("Failed to create review:", error);
     } else {
-      console.error("Failed to fetch vehicles:", String(error));
+      console.error("Failed to create review:", String(error));
     }
     throw error;
   }
@@ -121,7 +136,7 @@ export async function createReservation(data: {
     return result;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to create reservation:", error.message);
+      console.error("Failed to create reservation:", error);
     } else {
       console.error("Failed to create reservation:", String(error));
     }
@@ -135,7 +150,7 @@ export async function getReservations() {
     return result as Reservation[];
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to get reservations:", error.message);
+      console.error("Failed to get reservations:", error);
     } else {
       console.error("Failed to get reservations:", String(error));
     }
@@ -149,9 +164,9 @@ export async function deleteReservation(id: number) {
     return result;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to get reservations:", error.message);
+      console.error("Failed to delete reservations:", error);
     } else {
-      console.error("Failed to get reservations:", String(error));
+      console.error("Failed to delete reservations:", String(error));
     }
     throw error;
   }
@@ -189,9 +204,40 @@ export async function updateUser(data: UpdateUserData) {
     return result;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Failed to update user:", error.message);
+      console.error("Failed to update user:", error);
     } else {
       console.error("Failed to update user:", String(error));
+    }
+    throw error;
+  }
+}
+
+export async function getFavoriteVehicles(
+  params: { page?: number; per_page?: number } = {}
+) {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.per_page)
+      queryParams.append("per_page", params.per_page.toString());
+
+    const result = await get(`/favorites?${queryParams.toString()}`);
+    return result as FavoriteResponse;
+  } catch (error) {
+    console.error("Failed to get favorites:", error);
+    throw error;
+  }
+}
+
+export async function toggleFavorite(carId: number) {
+  try {
+    const result = await post(`/favorites/${carId}`);
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to toggle favorite:", error);
+    } else {
+      console.error("Failed to toggle favorite:", String(error));
     }
     throw error;
   }

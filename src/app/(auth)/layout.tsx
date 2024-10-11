@@ -11,9 +11,5 @@ export default async function Layout({
     console.log(user);
     redirect("/");
   }
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+  return <>{children}</>;
 }

@@ -8,6 +8,11 @@ import ReviewProvider from "@/components/ReviewProvider";
 import RecommendVehicles from "@/components/RecommendVehicles";
 import { format } from "date-fns";
 import DeleteButton from "./_components/DeleteButton";
+import { getUserInfo } from "@/lib/auth";
+
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Info } from "lucide-react";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
@@ -17,16 +22,20 @@ const formatDate = (dateString: string) => {
   return format(new Date(dateString), "MMMM dd, yyyy 'at' hh:mm a");
 };
 
-const Page = async ({ params }: { params: { carId: string } }) => {
+const Page = async ({ params }: { params: { carId: number } }) => {
   const { carId } = params;
 
   const car = await getVehicle(carId);
   const reviews = await getReviewsByCarId(carId);
   const reservations = await getReservations();
+  const user = await getUserInfo();
+  console.log(reservations);
+  console.log(carId);
 
   const currentReservation = reservations.find(
-    (reservation) => reservation.vehicle_id === parseInt(carId)
+    (reservation) => reservation.vehicle_id == carId
   );
+  console.log("reservation", currentReservation);
 
   const carDetails = [
     { label: "Type Car", value: car.type },
@@ -52,7 +61,7 @@ const Page = async ({ params }: { params: { carId: string } }) => {
               <h2 className="text-[2rem] sm:text-[2.75rem] font-bold">
                 {car.make}
               </h2>
-              <HeartButton carId={carId} isFavorite={false} size={44} />
+              <HeartButton carId={carId} size={44} />
             </div>
             <div className="flex sm:flex-row flex-col gap-3 items-start sm:items-center mt-5 mb-[1rem]">
               <StarRating rating={3.5} />
@@ -76,7 +85,26 @@ const Page = async ({ params }: { params: { carId: string } }) => {
                 </div>
               ))}
             </div>
-            {currentReservation ? (
+            {!user ? (
+              <div className="flex flex-col gap-12 mt-12">
+                <span className="text-[20px] flex gap-2 items-center justify-center font-semibold text-center text-red-400">
+                  <Info /> Log in to start your car rentals
+                </span>
+                <div className="flex justify-between font-semibold flex-wrap text-[18px] sm:text-[22px] text-gray-400 gap-3">
+                  <div>
+                    <span className="text-[30px] sm:text-[40px] text-black">
+                      ${car.price_per_day}/
+                    </span>{" "}
+                    day
+                  </div>
+                  <Link href={"/login"}>
+                    <Button className="rounded-sm text-[16px] sm:text-[20px] px-8 py-6 sm:px-10 sm:py-8 font-semibold">
+                      Login
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : currentReservation ? (
               <div className="mt-8 p-4 bg-gray-100 rounded-lg">
                 <h3 className="text-xl font-bold mb-4">Your Reservation</h3>
                 <p>
@@ -103,8 +131,8 @@ const Page = async ({ params }: { params: { carId: string } }) => {
       </div>
       <div className="p-[3.5%] pt-0 flex lg:flex-row flex-col gap-[4%]">
         <div className="lg:w-[47%] w-full flex flex-col">
-          <ReviewChart />
-          <ReviewProvider reviews={reviews} />
+          <ReviewChart carId={carId} />
+          <ReviewProvider reviews={reviews} user={user} />
         </div>
         <div className="lg:w-[53%] w-full flex flex-col">
           <RecommendVehicles type={car.type} currentCarId={carId} />

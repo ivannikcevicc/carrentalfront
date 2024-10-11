@@ -1,30 +1,57 @@
 import React from "react";
 import StarRating from "./starRating";
 import { Progress } from "./ui/progress";
+import { getReviewsInfoByCarId } from "@/lib/queries";
 
-const ReviewChart = () => {
+const ReviewChart = async ({ carId }: { carId: number }) => {
+  const info = await getReviewsInfoByCarId(carId);
+
+  const totalReviews = info.total_reviews;
   const ratings = [
-    { label: "5 stars", value: 67, count: 488 },
-    { label: "4 stars", value: 67, count: 90 },
-    { label: "3 stars", value: 67, count: 488 },
-    { label: "2 stars", value: 67, count: 488 },
-    { label: "1 star", value: 67, count: 488 },
+    {
+      label: "5 stars",
+      value: (info.stars["5_stars"] / totalReviews) * 100,
+      count: info.stars["5_stars"],
+    },
+    {
+      label: "4 stars",
+      value: (info.stars["4_stars"] / totalReviews) * 100,
+      count: info.stars["4_stars"],
+    },
+    {
+      label: "3 stars",
+      value: (info.stars["3_stars"] / totalReviews) * 100,
+      count: info.stars["3_stars"],
+    },
+    {
+      label: "2 stars",
+      value: (info.stars["2_stars"] / totalReviews) * 100,
+      count: info.stars["2_stars"],
+    },
+    {
+      label: "1 star",
+      value: (info.stars["1_star"] / totalReviews) * 100,
+      count: info.stars["1_star"],
+    },
   ];
 
   return (
     <div className="gap-[2rem] flex md:flex-row md:gap-[8%] flex-col rounded-2xl bg-white p-5 px-8">
       <div className="flex flex-col gap-4">
         <span className="font-semibold text-lg mb-2">Reviews</span>
-        <div className="flex  items-center">
+        <div className="flex items-center">
           <div className="">
-            <span className="font-extrabold text-[50px] leading-8">4.7</span>
+            <span className="font-extrabold text-[50px] leading-8">
+              {info.average_rating.toFixed(1)}
+            </span>
             <div className="my-4">
-              {" "}
-              <StarRating rating={4.7} large={true} />
+              <StarRating rating={info.average_rating} large={true} />
             </div>
-            <span className="text-gray-500 font-semibold">(578 Reviews)</span>
+            <span className="text-gray-500 font-semibold">
+              ({info.total_reviews} Review{info.total_reviews !== 1 ? "s" : ""})
+            </span>
           </div>
-        </div>{" "}
+        </div>
       </div>
       <div className="flex justify-center items-center w-full">
         <div className="flex flex-col gap-2 w-full">

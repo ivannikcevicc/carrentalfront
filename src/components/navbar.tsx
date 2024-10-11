@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/menubar";
 import Link from "next/link";
 import LogoutButton from "./logoutButton";
+import { getUserInfo } from "@/lib/auth";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await getUserInfo();
   return (
     <div className="flex p-[30px] justify-between border-b bg-white">
       <span className="text-[38px] font-bold text-primary">
@@ -82,7 +84,8 @@ const Navbar = () => {
             <MenubarTrigger>
               {" "}
               <Avatar className=" flex sm:h-[55px] sm:w-[55px] w-[40px] h-[40px]">
-                <AvatarImage src="https://github.com/shadcn.png" />
+                {/* @ts-expect-error shadcn issue */}
+                <AvatarImage src={user?.avatar} alt={"image"} />
                 <AvatarFallback>Avatar</AvatarFallback>
               </Avatar>
             </MenubarTrigger>

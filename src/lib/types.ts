@@ -36,6 +36,11 @@ export type UpdateUserData = {
   email: string;
   avatar?: File;
 };
+export type LoggedUserData = {
+  name: string;
+  email: string;
+  avatar?: string | null;
+};
 
 export interface Session {
   user: User;
@@ -117,6 +122,22 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export interface FavoriteResponse {
+  current_page: number;
+  data: Car[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: { url: string | null; label: string; active: boolean }[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
 export interface Reservation {
   id: number;
   user_id: number;
@@ -129,4 +150,16 @@ export interface Reservation {
   updated_at: string;
   user: User;
   vehicle: Car;
+}
+
+export interface ReviewOverview {
+  average_rating: number;
+  total_reviews: number;
+  stars: {
+    "1_star": number;
+    "2_stars": number;
+    "3_stars": number;
+    "4_stars": number;
+    "5_stars": number;
+  };
 }

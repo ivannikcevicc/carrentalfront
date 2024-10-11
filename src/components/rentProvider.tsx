@@ -25,11 +25,6 @@ const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
     }
 
     try {
-      console.log({
-        vehicle_id: carId,
-        start_date: data.dateRange.from,
-        end_date: data.dateRange.to,
-      });
       const response = await createReservation({
         vehicle_id: carId,
         start_date: data.dateRange.from,
@@ -41,7 +36,11 @@ const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
       return response;
     } catch (err) {
       console.error(err);
-      toast.error("Failed to create reservation. Please try again.");
+      toast.error(
+        //@ts-expect-error expected
+        err?.response?.data?.message ||
+          "Failed to create reservation. Please try again."
+      );
     }
   };
 

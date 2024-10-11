@@ -27,6 +27,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import toast from "react-hot-toast";
 
 export default function CarsPage() {
   const [cars, setCars] = useState<PaginatedResponse<Car> | null>(null);
@@ -35,13 +36,19 @@ export default function CarsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  //   `useCallback` is used here to memoize the `fetchCars` function. This means that the function
+  //   will only be recreated if its dependencies (`searchParams` or `router`) change. This optimization is important because:
+
+  // 1. It prevents unnecessary re-renders of child components that might receive this function as a prop.
+  // 2. It ensures that the effect hook that uses this function doesn't run unnecessarily.
+
   const fetchCars = useCallback(async () => {
     setLoading(true);
     const user = await getUserInfo();
     if (!user) {
       redirect("/login");
     }
-
+    //Filter generation
     const filters: FilterParams = {
       type: searchParams.getAll("type[]"),
       seating_capacity: searchParams.getAll("seating_capacity[]"),
@@ -57,6 +64,7 @@ export default function CarsPage() {
 
     try {
       const result = await getVehicles(filters);
+      //Pagination
       if (result.data.length === 0 && result.meta.current_page > 1) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", "1");
@@ -65,7 +73,11 @@ export default function CarsPage() {
         setCars(result);
       }
     } catch (error) {
-      console.error("Failed to fetch cars:", error);
+      toast.error(
+        //@ts-expect-error expected
+        error?.response?.data?.message ||
+          "Failed to fetch cars. Please try again."
+      );
       const params = new URLSearchParams(searchParams.toString());
       params.set("page", "1");
       router.push(`/cars?${params.toString()}`, { scroll: false });

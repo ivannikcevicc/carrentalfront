@@ -7,11 +7,11 @@ const RecommendVehicles = async ({
   currentCarId,
 }: {
   type: string;
-  currentCarId: string;
+  currentCarId: number;
 }) => {
   const cars = await getVehicles({ type: [type] });
   const displayedCars = cars.data
-    .filter((car) => car.id.toString() !== currentCarId)
+    .filter((car) => car.id !== currentCarId)
     .slice(0, 5);
 
   return (

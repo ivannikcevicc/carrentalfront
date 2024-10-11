@@ -1,6 +1,6 @@
 "use client";
 
-import { Review as ReviewType } from "@/lib/types";
+import { LoggedUserData, Review as ReviewType } from "@/lib/types";
 import React, { useState } from "react";
 import Review from "./Review";
 import { Button } from "./ui/button";
@@ -37,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import YellowStar from "./../../public/yellow-star.svg";
 import EmptyStar from "./../../public/empty-star.svg";
 import { createReview } from "@/lib/queries";
+import Link from "next/link";
 
 const ReviewFilters = [
   {
@@ -49,7 +50,13 @@ const ReviewFilters = [
   },
 ];
 
-const ReviewProvider = ({ reviews }: { reviews: ReviewType[] }) => {
+const ReviewProvider = ({
+  reviews,
+  user,
+}: {
+  reviews: ReviewType[];
+  user: LoggedUserData | null;
+}) => {
   const [open, setOpen] = React.useState(false);
   const [filter, setFilter] = useState("newest");
   const [rating, setRating] = useState<number>(0); // State to store the selected rating
@@ -118,7 +125,9 @@ const ReviewProvider = ({ reviews }: { reviews: ReviewType[] }) => {
     } catch (error) {
       // Handle errors and show a custom error message
       setError(
-        "You can only review vehicles from reservations that have started."
+        //@ts-expect-error expected
+        error?.response?.data?.message ||
+          "You can only review vehicles from reservations that have started."
       );
     }
   };
@@ -173,48 +182,56 @@ const ReviewProvider = ({ reviews }: { reviews: ReviewType[] }) => {
             </Command>
           </PopoverContent>
         </Popover>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Write a review</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Write a review</DialogTitle>
-              <DialogDescription>
-                Select the star rating and leave a comment.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="rating" className="text-right">
-                  Rating
-                </Label>
-                <div className="flex space-x-2">{renderStars()}</div>
+        {user ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Write a review</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Write a review</DialogTitle>
+                <DialogDescription>
+                  Select the star rating and leave a comment.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="rating" className="text-right">
+                    Rating
+                  </Label>
+                  <div className="flex space-x-2">{renderStars()}</div>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="comment" className="text-right">
+                    Comment
+                  </Label>
+                  <Input
+                    id="comment"
+                    value={comment} // Bind the input to the comment state
+                    onChange={(e) => setComment(e.target.value)} // Update the comment state when typing
+                    placeholder="Write your review here..."
+                    className="col-span-3"
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="comment" className="text-right">
-                  Comment
-                </Label>
-                <Input
-                  id="comment"
-                  value={comment} // Bind the input to the comment state
-                  onChange={(e) => setComment(e.target.value)} // Update the comment state when typing
-                  placeholder="Write your review here..."
-                  className="col-span-3"
-                />
-              </div>
-            </div>
 
-            <DialogFooter>
-              <Button type="submit" onClick={handleSubmit}>
-                Create review
-              </Button>
-              {error && (
-                <p className="col-span-4 text-red-500 text-sm">{error}</p> // Display error message if any
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button type="submit" onClick={handleSubmit}>
+                  Create review
+                </Button>
+                {error && (
+                  <p className="col-span-4 text-red-500 text-sm">{error}</p> // Display error message if any
+                )}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Link href={"/login"}>
+            <Button className="rounded-sm text-[16px] font-semibold">
+              Login to review
+            </Button>
+          </Link>
+        )}
       </div>
       <div className="flex flex-col divide-y-2 rounded-2xl bg-white px-6 py-2">
         {sortedReviews.length > 0 ? (
