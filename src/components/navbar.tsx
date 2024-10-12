@@ -98,9 +98,7 @@ const Navbar = () => {
                     </Avatar>
                   </MenubarTrigger>
                   <MenubarContent>
-                    <MenubarItem>
-                      <span className="font-semibold">{user.name}</span>
-                    </MenubarItem>
+                    <span className="font-semibold p-3">{user.name}</span>
                     <MenubarItem>
                       <LogoutButton />
                     </MenubarItem>
@@ -151,15 +149,13 @@ const Navbar = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <div className="hover-right">
-              <Button variant="ghost" className="justify-start w-full">
-                <Avatar className="h-[40px] w-[40px] mr-2">
-                  {/* @ts-expect-error shadcn issue */}
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name[0]}</AvatarFallback>
-                </Avatar>
-                <span className="font-semibold">{user.name}</span>
-              </Button>
+            <div className="hover-right flex items-center p-5 gap-2">
+              <Avatar className="h-[40px] w-[40px] mr-2">
+                {/* @ts-expect-error shadcn issue */}
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name[0]}</AvatarFallback>
+              </Avatar>
+              <span className="font-semibold">{user.name}</span>
             </div>
             {menuItems.map((item, index) => (
               <div key={index} className="hover-right">
