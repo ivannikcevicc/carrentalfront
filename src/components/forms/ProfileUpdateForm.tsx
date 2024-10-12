@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Camera } from "lucide-react";
 import { updateUser } from "@/lib/queries";
-import { UpdateUserData, Session } from "@/lib/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { getUserInfo } from "@/lib/auth";
@@ -21,18 +20,6 @@ const schema = z.object({
     .email("Invalid email address")
     .min(5, "Email is too short")
     .max(50, "Email is too long"),
-  avatar: z
-    .instanceof(File)
-    .refine((file) => file.size <= 5000000, "The avatar must be less than 5MB")
-    .refine(
-      (file) =>
-        ["image/jpeg", "image/png", "image/jpg", "image/gif"].includes(
-          file.type
-        ),
-      "The avatar must be a JPEG, PNG, JPG or GIF"
-    )
-    .optional()
-    .nullable(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -41,12 +28,12 @@ const ProfileUpdateForm: React.FC = () => {
   const router = useRouter();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -76,47 +63,34 @@ const ProfileUpdateForm: React.FC = () => {
         setAvatarPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      setValue("avatar", file);
+    } else {
+      setAvatarPreview("/placeholder-avatar.png");
     }
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const updateData: UpdateUserData = {
-        name: data.name,
-        email: data.email,
-      };
-      if (data.avatar instanceof File) {
-        updateData.avatar = data.avatar;
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+
+      const fileInput = fileInputRef.current;
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        formData.append("avatar", fileInput.files[0]);
       }
 
-      const response = await updateUser(updateData);
+      const result = await updateUser(formData);
 
-      // Update the session data in localStorage
-      const sessionData = localStorage.getItem("session");
-      if (sessionData) {
-        const session: Session = JSON.parse(sessionData);
-        session.user = {
-          ...session.user,
-          name: data.name,
-          email: data.email,
-          avatar: response.user.avatar,
-        };
-        localStorage.setItem("session", JSON.stringify(session));
-      }
-
-      toast.success("Profile updated successfully!");
-      router.refresh();
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(
-          //@ts-expect-error expected
-          err?.response?.data?.message ||
-            "Error updating profile. Please try again."
-        );
+      if (result.success) {
+        toast.success("Profile updated successfully!");
+        router.refresh();
       } else {
-        toast.error("Error updating profile");
+        toast.error(
+          result.error || "Error updating profile. Please try again."
+        );
       }
+    } catch (error) {
+      toast.error("Error updating profile");
     }
   };
 
@@ -131,29 +105,26 @@ const ProfileUpdateForm: React.FC = () => {
           <AvatarImage src={avatarPreview || "/placeholder-avatar.png"} />
           <AvatarFallback>Avatar</AvatarFallback>
         </Avatar>
-        <div className=" gap-3">
+        <div className="gap-3">
           <Input
             id="avatar"
             type="file"
             accept="image/jpeg,image/png,image/jpg,image/gif"
             className="hidden"
-            {...register("avatar")}
+            ref={fileInputRef}
             onChange={handleAvatarChange}
           />
           <Button
             type="button"
             variant="outline"
             size="lg"
-            onClick={() => document.getElementById("avatar")?.click()}
+            onClick={() => fileInputRef.current?.click()}
             className="text-lg"
           >
             <Camera className="mr-2 h-6 w-6" /> Upload Avatar
           </Button>
         </div>
       </div>
-      {errors.avatar && (
-        <p className="text-red-500 text-sm mt-1">{errors.avatar.message}</p>
-      )}
 
       <div>
         <label className="block mb-2 text-lg font-medium" htmlFor="name">
