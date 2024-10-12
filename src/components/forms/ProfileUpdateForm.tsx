@@ -86,7 +86,9 @@ const ProfileUpdateForm: React.FC = () => {
         router.refresh();
       } else {
         toast.error(
-          result.error || "Error updating profile. Please try again."
+          //@ts-expect-error expected
+          result?.response?.data?.message ||
+            "Error updating profile. Please try again."
         );
       }
     } catch (error) {
