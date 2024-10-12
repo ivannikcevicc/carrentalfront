@@ -44,10 +44,6 @@ export default function CarsPage() {
 
   const fetchCars = useCallback(async () => {
     setLoading(true);
-    const user = await getUserInfo();
-    if (!user) {
-      redirect("/login");
-    }
     //Filter generation
     const filters: FilterParams = {
       type: searchParams.getAll("type[]"),
