@@ -7,8 +7,6 @@ import { FilterParams, PaginatedResponse, Car } from "@/lib/types";
 import CarGrid from "@/components/car-grid";
 import { SearchForm } from "@/components/forms/search-form";
 import Search from "@/components/search";
-import { getUserInfo } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
