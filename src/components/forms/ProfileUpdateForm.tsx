@@ -126,12 +126,12 @@ const ProfileUpdateForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="flex items-center gap-8 justify-center mb-4">
+      <div className="flex items-center gap-8 justify-center sm:flex-row flex-col mb-4">
         <Avatar className="w-32 h-32">
           <AvatarImage src={avatarPreview || "/placeholder-avatar.png"} />
           <AvatarFallback>Avatar</AvatarFallback>
         </Avatar>
-        <div>
+        <div className=" gap-3">
           <Input
             id="avatar"
             type="file"

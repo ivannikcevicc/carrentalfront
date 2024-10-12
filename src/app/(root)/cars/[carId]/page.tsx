@@ -27,15 +27,16 @@ const Page = async ({ params }: { params: { carId: number } }) => {
 
   const car = await getVehicle(carId);
   const reviews = await getReviewsByCarId(carId);
-  const reservations = await getReservations();
   const user = await getUserInfo();
-  console.log(reservations);
-  console.log(carId);
 
-  const currentReservation = reservations.find(
-    (reservation) => reservation.vehicle_id == carId
-  );
-  console.log("reservation", currentReservation);
+  let currentReservation;
+  if (user) {
+    const reservations = await getReservations();
+
+    currentReservation = reservations.find(
+      (reservation) => reservation.vehicle_id == carId
+    );
+  }
 
   const carDetails = [
     { label: "Type Car", value: car.type },

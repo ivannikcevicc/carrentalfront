@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { DatePickerProps } from "@/lib/types";
 import { DateRange } from "react-day-picker";
+import toast from "react-hot-toast";
 
 const DatePickerBase: React.FC<DatePickerProps> = ({
   dateRange,
@@ -100,7 +101,10 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dateRange?.from || !dateRange?.to) return;
+    if (!dateRange?.from || !dateRange?.to) {
+      toast.error("Select date range first.");
+      return;
+    }
 
     const fromISO = formatToISOString(dateRange.from, dateRange.startTime);
     const toISO = formatToISOString(dateRange.to, dateRange.endTime);

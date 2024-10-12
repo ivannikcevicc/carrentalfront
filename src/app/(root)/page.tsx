@@ -2,16 +2,10 @@ import CarGrid from "@/components/car-grid";
 import Landing from "@/components/landing";
 import Search from "@/components/search";
 import Link from "next/link";
-import { getUserInfo } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import Testimonials from "@/components/testimonials";
 import { getVehicles } from "@/lib/queries";
 
 export default async function Home() {
-  const user = await getUserInfo();
-  if (!user) {
-    redirect("/login");
-  }
   const carsResponse = await getVehicles({ per_page: 4 });
 
   return (

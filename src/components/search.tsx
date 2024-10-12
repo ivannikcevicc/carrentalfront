@@ -8,7 +8,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 const Search = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(
+    undefined
+  );
 
   // Sync dateRange with URL parameters on component mount and searchParams changes
   useEffect(() => {
@@ -21,14 +23,23 @@ const Search = () => {
       const toDate = new Date(endDate);
 
       // Extract time components
-      const startTime = `${fromDate.getHours().toString().padStart(2, '0')}:${fromDate.getMinutes().toString().padStart(2, '0')}`;
-      const endTime = `${toDate.getHours().toString().padStart(2, '0')}:${toDate.getMinutes().toString().padStart(2, '0')}`;
+      const startTime = `${fromDate
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${fromDate
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+      const endTime = `${toDate.getHours().toString().padStart(2, "0")}:${toDate
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
 
       setDateRange({
         from: fromDate,
         to: toDate,
         startTime,
-        endTime
+        endTime,
       });
     } else {
       // Reset dateRange if no dates in URL

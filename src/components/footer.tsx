@@ -9,10 +9,10 @@ const Footer = () => {
 
   const navigationLinks = [
     { name: "Home", href: "/" },
-    { name: "Profile", href: "/profile" },
-    { name: "About Us", href: "/about" },
-    { name: "Help", href: "/help" },
-    { name: "Terms of Service", href: "/terms" },
+    { name: "Profile", href: "/editProfile" },
+    { name: "About Us", href: "https://google.com" },
+    { name: "Help", href: "https://google.com" },
+    { name: "Terms of Service", href: "https://google.com" },
   ];
 
   return (
@@ -24,7 +24,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col items-center space-y-6">
           {/* Logo/Name */}
-          <div className="text-xl font-semibold text-gray-800">Name</div>
+          <div className="text-xl font-semibold text-gray-800">EasyRide</div>
 
           {/* Navigation Links */}
           <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4">
@@ -32,7 +32,7 @@ const Footer = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 transition-colors hover:border-primary border-b-2 border-transparent"
               >
                 {link.name}
               </Link>
@@ -41,7 +41,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <div className="text-sm text-gray-500">
-            © {new Date().getFullYear()} name. All rights reserved.
+            © {new Date().getFullYear()} EasyRide. All rights reserved.
           </div>
         </div>
       </div>

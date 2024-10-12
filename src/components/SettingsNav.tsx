@@ -20,8 +20,8 @@ const SettingsNavItems = [
   },
   {
     imgSrc: StarIcon.src,
-    label: "Reviews",
-    href: "/reviews",
+    label: "Favorites",
+    href: "/favorites",
   },
 ];
 
@@ -34,7 +34,7 @@ const SettingsNav = () => {
   }, [pathname]);
 
   return (
-    <div className="flex flex-col gap-10 text-[22px] lg:text-[26px]">
+    <div className="flex flex-col gap-10 text-[18px] lg:text-[22px]">
       {SettingsNavItems.map((item) => {
         const activeColor = "#3563E9";
         const inactiveColor = "#1A202C";
@@ -56,7 +56,7 @@ const SettingsNav = () => {
             <img
               src={item.imgSrc}
               alt={`${item.label} icon`}
-              className="w-8 h-8 mr-2"
+              className="w-7 h-7 mr-2"
               style={{ filter: imgFilter }}
             />
             {item.label}

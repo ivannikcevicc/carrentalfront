@@ -5,6 +5,8 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { getFavoriteVehicles, toggleFavorite } from "@/lib/queries";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
+import { getUserInfo } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export const HeartButton = ({
   carId,
@@ -17,9 +19,15 @@ export const HeartButton = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   const checkFavoriteStatus = useCallback(async () => {
     try {
+      const user = await getUserInfo();
+      if (!user) {
+        setIsFavorite(false);
+        return;
+      }
       const favorites = await getFavoriteVehicles();
       const isFavorited = favorites.data.some((car) => car.id === carId);
       setIsFavorite(isFavorited);
@@ -39,6 +47,11 @@ export const HeartButton = ({
   }, [checkFavoriteStatus]);
 
   const handleToggleFavorite = async () => {
+    const user = await getUserInfo();
+    if (!user) {
+      router.push("/login");
+      return;
+    }
     setIsLoading(true);
     try {
       await toggleFavorite(carId);
