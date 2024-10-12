@@ -8,7 +8,6 @@ import {
   Reservation,
   Review,
   ReviewOverview,
-  UpdateUserData,
 } from "@/lib/types";
 import { Session, User } from "@/lib/types";
 import { revalidatePath } from "next/cache";
