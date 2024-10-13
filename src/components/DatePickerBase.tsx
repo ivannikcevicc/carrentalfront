@@ -24,6 +24,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
   onSubmit,
   submitButtonText,
   price,
+  carId,
 }) => {
   const formatDateRange = () => {
     if (!dateRange?.from || !dateRange?.to) return "Pick a date range";
@@ -155,6 +156,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
                       selected={dateRange}
                       onSelect={handleDateSelect}
                       numberOfMonths={2}
+                      carId={carId}
                     />
                     {showTimeSelect && (
                       <div className="grid grid-cols-2 gap-2 p-3 border-t border-border">

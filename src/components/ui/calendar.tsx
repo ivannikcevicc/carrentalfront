@@ -1,30 +1,86 @@
-"use client";
-
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { DayPicker } from "react-day-picker";
-
+import {
+  DayPicker,
+  DayPickerProps,
+  DayPickerDefaultProps,
+  DayPickerSingleProps,
+  DayPickerMultipleProps,
+  DayPickerRangeProps,
+} from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { getUnavailableDates } from "@/lib/queries";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+type UnavailableDatesResponse = {
+  unavailable_dates: string[];
+};
+
+type BaseCalendarProps = {
+  className?: string;
+  classNames?: DayPickerProps["classNames"];
+  showOutsideDays?: boolean;
+  carId?: number;
+};
+
+type CalendarProps =
+  | (Omit<DayPickerDefaultProps, "disabled"> & BaseCalendarProps)
+  | (Omit<DayPickerSingleProps, "disabled"> & BaseCalendarProps)
+  | (Omit<DayPickerMultipleProps, "disabled"> & BaseCalendarProps)
+  | (Omit<DayPickerRangeProps, "disabled"> & BaseCalendarProps);
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  carId,
   ...props
 }: CalendarProps) {
-  const disabledDays = React.useCallback((date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const sixMonthsLater = new Date(today);
-    sixMonthsLater.setMonth(today.getMonth() + 6);
+  const [unavailableDates, setUnavailableDates] = React.useState<Date[]>([]);
 
-    return date <= tomorrow || date > sixMonthsLater;
-  }, []);
+  React.useEffect(() => {
+    const fetchUnavailableDates = async () => {
+      if (carId) {
+        try {
+          const result: UnavailableDatesResponse = await getUnavailableDates(
+            carId
+          );
+          const dates = result.unavailable_dates.map(
+            (dateStr: string) => new Date(dateStr)
+          );
+          setUnavailableDates(dates);
+        } catch (error) {
+          console.error("Failed to fetch unavailable dates:", error);
+        }
+      } else {
+        setUnavailableDates([]);
+      }
+    };
+
+    fetchUnavailableDates();
+  }, [carId]);
+
+  const disabledDays = React.useCallback(
+    (date: Date): boolean => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const sixMonthsLater = new Date(today);
+      sixMonthsLater.setMonth(today.getMonth() + 6);
+
+      const isUnavailable = carId
+        ? unavailableDates.some(
+            (unavailableDate) =>
+              unavailableDate.toISOString().split("T")[0] ===
+              date.toISOString().split("T")[0]
+          )
+        : false;
+
+      return date < tomorrow || date > sixMonthsLater || isUnavailable;
+    },
+    [unavailableDates, carId]
+  );
 
   return (
     <DayPicker
@@ -71,9 +127,7 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        //eslint-disable-next-line
         IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
-        //eslint-disable-next-line
         IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />,
       }}
       disabled={disabledDays}

@@ -52,6 +52,7 @@ const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
       onSubmit={handleRent}
       showTimeSelect={true}
       price={price}
+      carId={carId}
     />
   );
 };

@@ -96,6 +96,7 @@ export interface DatePickerProps {
   }) => void;
   submitButtonText?: string;
   price?: string;
+  carId?: number | undefined;
 }
 
 export interface PaginatedResponse<T> {
@@ -162,4 +163,8 @@ export interface ReviewOverview {
     "4_stars": number;
     "5_stars": number;
   };
+}
+
+export interface UnavailableDatesResponse {
+  unavailable_dates: string[];
 }

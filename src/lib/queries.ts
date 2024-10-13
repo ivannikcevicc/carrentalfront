@@ -8,6 +8,7 @@ import {
   Reservation,
   Review,
   ReviewOverview,
+  UnavailableDatesResponse,
 } from "@/lib/types";
 import { Session, User } from "@/lib/types";
 import { revalidatePath } from "next/cache";
@@ -233,6 +234,20 @@ export async function toggleFavorite(carId: number) {
       console.error("Failed to toggle favorite:", error);
     } else {
       console.error("Failed to toggle favorite:", String(error));
+    }
+    throw error;
+  }
+}
+
+export async function getUnavailableDates(carId: number) {
+  try {
+    const result = await get(`/vehicles/${carId}/unvailableDates`);
+    return result as UnavailableDatesResponse;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Failed to fetch unavailable dates:", error);
+    } else {
+      console.error("Failed to fetch unavailable dates:", String(error));
     }
     throw error;
   }
