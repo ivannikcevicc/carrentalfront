@@ -18,3 +18,18 @@ export interface Vehicle {
     | "Under Maintenance"
     | "Under Repair";
 }
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password?: string;
+  is_admin?: boolean;
+  is_blocked?: boolean;
+  roles: Role[];
+}
+
+export interface Role {
+  id: number;
+  name: string;
+}

@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="content">
+    <div className="content-wrapper">
       <section className="content-header">
         <h1>Dashboard</h1>
       </section>
@@ -133,12 +133,14 @@ const Dashboard: React.FC = () => {
 };
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => (
-  <div className={`col-lg-3 col-6 small-box ${color}`}>
-    <div className="inner">
-      <h3>{value}</h3>
-      <p>{title}</p>
+  <div className="col-lg-3 col-6">
+    <div className={`small-box ${color}`}>
+      <div className="inner">
+        <h3>{value}</h3>
+        <p>{title}</p>
+      </div>
+      <div className="icon">{icon}</div>
     </div>
-    <div className="icon">{icon}</div>
   </div>
 );
 
