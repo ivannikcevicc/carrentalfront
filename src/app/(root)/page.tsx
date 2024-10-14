@@ -1,13 +1,10 @@
-import CarGrid from "@/components/car-grid";
+import CarGridWrapper from "@/components/CarGridWrapper";
 import Landing from "@/components/landing";
 import Search from "@/components/search";
 import Link from "next/link";
 import Testimonials from "@/components/testimonials";
-import { getVehicles } from "@/lib/queries";
 
 export default async function Home() {
-  const carsResponse = await getVehicles({ per_page: 4 });
-
   return (
     <div className="background-light">
       <div>
@@ -23,7 +20,7 @@ export default async function Home() {
           View All
         </Link>
       </div>
-      <CarGrid filter={true} cars={carsResponse.data} />
+      <CarGridWrapper filter={true} filterParams={{ per_page: 4 }} />
       <Testimonials />
     </div>
   );

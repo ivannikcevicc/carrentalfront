@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getVehicles } from "@/lib/queries";
+import { getFavoriteVehicles, getVehicles } from "@/lib/queries";
 import { FilterParams, PaginatedResponse, Car } from "@/lib/types";
 import CarGrid from "@/components/car-grid";
 import { SearchForm } from "@/components/forms/search-form";
@@ -31,6 +31,7 @@ export default function CarsPage() {
   const [cars, setCars] = useState<PaginatedResponse<Car> | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [initialFavorites, setInitialFavorites] = useState<number[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -57,14 +58,18 @@ export default function CarsPage() {
     };
 
     try {
-      const result = await getVehicles(filters);
+      const [carsResult, favoritesResult] = await Promise.all([
+        getVehicles(filters),
+        getFavoriteVehicles(),
+      ]);
       //Pagination
-      if (result.data.length === 0 && result.meta.current_page > 1) {
+      if (carsResult.data.length === 0 && carsResult.meta.current_page > 1) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", "1");
         router.push(`/cars?${params.toString()}`, { scroll: false });
       } else {
-        setCars(result);
+        setCars(carsResult);
+        setInitialFavorites(favoritesResult.data.map((car) => car.id));
       }
     } catch (error) {
       toast.error(
@@ -178,7 +183,11 @@ export default function CarsPage() {
           <div className="text-3xl text-center mt-[3rem]">Loading...</div>
         ) : cars && cars.data.length > 0 ? (
           <>
-            <CarGrid slim={true} cars={cars.data} />
+            <CarGrid
+              slim={true}
+              cars={cars.data}
+              initialFavorites={initialFavorites}
+            />
             <Pagination>
               <PaginationContent>
                 <PaginationItem>

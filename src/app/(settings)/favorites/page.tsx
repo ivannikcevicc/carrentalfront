@@ -83,7 +83,11 @@ const FavoritesPage = () => {
         <div className="text-3xl text-center mt-[3rem]">Loading...</div>
       ) : favorites && favorites.data.length > 0 ? (
         <>
-          <CarGrid extraSlim={true} cars={favorites.data} />
+          <CarGrid
+            extraSlim={true}
+            cars={favorites.data}
+            initialFavorites={favorites.data.map((car) => car.id)}
+          />
           <Pagination>
             <PaginationContent>
               <PaginationItem>
