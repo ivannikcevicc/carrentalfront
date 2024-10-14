@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Info } from "lucide-react";
 import CarDetailsFavoriteButton from "./_components/CarDetailsFavorite";
+import { Car, FavoriteResponse } from "@/lib/types";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
@@ -30,16 +31,35 @@ const formatDate = (dateString: string) => {
 const Page = async ({ params }: { params: { carId: number } }) => {
   const { carId } = params;
 
-  const [car, reviews, user, favorites] = await Promise.all([
+  const [car, reviews, user] = await Promise.all([
     getVehicle(carId),
     getReviewsByCarId(carId),
     getUserInfo(),
-    getFavoriteVehicles(),
   ]);
 
-  const initialIsFavorite = favorites.data.some(
-    (favCar) => favCar.id === Number(carId)
-  );
+  let initialIsFavorite = false;
+  let favorites: FavoriteResponse = {
+    data: [],
+    current_page: 1,
+    first_page_url: "",
+    from: 1,
+    last_page: 1,
+    last_page_url: "",
+    links: [],
+    next_page_url: null,
+    path: "",
+    per_page: 10,
+    prev_page_url: null,
+    to: 1,
+    total: 0,
+  };
+
+  if (user) {
+    favorites = await getFavoriteVehicles();
+    initialIsFavorite = favorites.data.some(
+      (favCar: Car) => favCar.id === Number(carId)
+    );
+  }
 
   let currentReservation;
   if (user) {
@@ -48,7 +68,6 @@ const Page = async ({ params }: { params: { carId: number } }) => {
       (reservation) => reservation.vehicle_id == carId
     );
   }
-
   const carDetails = [
     { label: "Type Car", value: car.type },
     { label: "Capacity", value: `${car.seating_capacity} Person` },

@@ -239,7 +239,6 @@ export async function getFavoriteVehicles(
     throw error;
   }
 }
-
 export async function toggleFavorite(carId: number) {
   try {
     // Toggle on the server
@@ -268,7 +267,6 @@ export async function toggleFavorite(carId: number) {
     throw error;
   }
 }
-
 const getLocalFavorites = (): FavoriteResponse | null => {
   if (typeof window !== "undefined") {
     const storedFavorites = localStorage.getItem("favorites");
@@ -277,7 +275,6 @@ const getLocalFavorites = (): FavoriteResponse | null => {
   return null;
 };
 
-// Helper function to set favorites in localStorage
 const setLocalFavorites = (favorites: FavoriteResponse) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("favorites", JSON.stringify(favorites));
