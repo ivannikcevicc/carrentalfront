@@ -132,6 +132,16 @@ export const fetchReservations = async (page = 1) => {
   }
 };
 
+export const updateReservationStatus = async (id: number, status: string) => {
+  try {
+    const response = await api.put(`${RESERVATIONS_URL}/${id}`, { status });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating reservation status:", error);
+    throw error;
+  }
+};
+
 export const updateVehicleStatus = async (id, status) => {
   try {
     const response = await api.put(`${VEHICLES_URL}/${id}/status`, { status });

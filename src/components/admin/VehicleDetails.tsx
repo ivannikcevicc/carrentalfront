@@ -50,7 +50,6 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
     return <div>No vehicle data available.</div>;
   }
 
-  // Parse images from the JSON string
   const vehicleImages = JSON.parse(vehicle.images);
 
   return (
