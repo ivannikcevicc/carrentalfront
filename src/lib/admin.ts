@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getSession } from "./auth";
 import { User, Role } from "./adminTypes";
+import { Reservation } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://lucic.tech/api";
 const DASHBOARD_URL = "/admin/dashboard";
@@ -244,6 +245,16 @@ export const toggleBlockUser = async (userId: number) => {
     return response.data;
   } catch (error) {
     console.error("Error toggling user block status:", error);
+    throw error;
+  }
+};
+
+export const fetchUserDetails = async (id: number): Promise<User> => {
+  try {
+    const response = await api.get(`${USERS_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user details:", error);
     throw error;
   }
 };

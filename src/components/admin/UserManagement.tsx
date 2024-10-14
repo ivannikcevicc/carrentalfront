@@ -40,6 +40,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -195,7 +196,14 @@ const UserManagement: React.FC = () => {
     )
     .map((user) => (
       <TableRow key={user.id} className="hover:bg-gray-50 transition">
-        <TableCell>{user.name}</TableCell>
+        <TableCell>
+          <Link
+            href={`/admin/users/details?id=${user.id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {user.name}
+          </Link>
+        </TableCell>
         <TableCell>{user.email}</TableCell>
         <TableCell>
           {user.roles.length ? (
