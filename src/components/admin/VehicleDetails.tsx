@@ -1,5 +1,6 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import { fetchVehicleDetails } from "@/lib/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,35 +14,50 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-const VehicleDetails = ({ onBack }) => {
+const VehicleDetails = ({ vehicleId, onBack }) => {
   const [vehicle, setVehicle] = useState(null);
   const [rentalHistory, setRentalHistory] = useState([]);
-  const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadVehicleDetails = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const data = await fetchVehicleDetails(id);
+        const data = await fetchVehicleDetails(vehicleId);
         setVehicle(data.vehicle);
-        setRentalHistory(data.rental_history);
+        setRentalHistory(data.reservations || []);
       } catch (error) {
         console.error("Error loading vehicle details:", error);
+        setError("Failed to load vehicle details. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
-
     loadVehicleDetails();
-  }, [id]);
+  }, [vehicleId]);
 
-  if (!vehicle) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  if (!vehicle) {
+    return <div>No vehicle data available.</div>;
+  }
+
+  // Parse images from the JSON string
+  const vehicleImages = JSON.parse(vehicle.images);
 
   return (
     <div className="space-y-6">
       <Button onClick={onBack} variant="outline" className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Vehicles
       </Button>
-
       <Card>
         <CardHeader>
           <CardTitle>Vehicle Details</CardTitle>
@@ -83,6 +99,19 @@ const VehicleDetails = ({ onBack }) => {
             <strong>Description:</strong>
             <p>{vehicle.description}</p>
           </div>
+          <div className="mt-4">
+            <strong>Images:</strong>
+            <div className="flex space-x-2 mt-2">
+              {vehicleImages.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Vehicle ${vehicleId}`}
+                  className="w-32 h-32 object-cover"
+                />
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -110,13 +139,35 @@ const VehicleDetails = ({ onBack }) => {
                   <TableCell>
                     {new Date(reservation.end_date).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>{reservation.user.name}</TableCell>
+                  <TableCell>{reservation.user_id}</TableCell>
                   <TableCell>{reservation.status}</TableCell>
                   <TableCell>${reservation.total_price}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Maintenance History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <p>No maintenance records available.</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Reviews</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <p>No reviews available.</p>
+          </div>
         </CardContent>
       </Card>
     </div>

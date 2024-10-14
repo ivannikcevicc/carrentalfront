@@ -42,6 +42,16 @@ export const fetchDashboardData = async () => {
     throw error;
   }
 };
+export const fetchVehicleDetails = async (vehicleId) => {
+  try {
+    const response = await api.get(`${VEHICLES_URL}/${vehicleId}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching vehicle details:", error);
+    throw error;
+  }
+};
 
 export const fetchVehicles = async (page = 1, searchTerm = "") => {
   try {
