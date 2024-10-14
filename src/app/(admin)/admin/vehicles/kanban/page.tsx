@@ -65,6 +65,9 @@ const VehicleKanbanPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
   useEffect(() => {
     const loadVehicles = async () => {
@@ -112,6 +115,19 @@ const VehicleKanbanPage = () => {
     }
   };
 
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const matchesStatus =
+      selectedStatus === "All" || vehicle.status === selectedStatus;
+    const matchesPrice =
+      (priceRange.min === "" || vehicle.price_per_day >= priceRange.min) &&
+      (priceRange.max === "" || vehicle.price_per_day <= priceRange.max);
+    const matchesSearch =
+      vehicle.make.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vehicle.model.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesStatus && matchesPrice && matchesSearch;
+  });
+
   if (isLoading) {
     return <div className="p-6">Loading...</div>;
   }
@@ -135,15 +151,57 @@ const VehicleKanbanPage = () => {
           <h2 className="text-3xl font-semibold text-gray-700">
             Vehicle Kanban Board
           </h2>
+          <input
+            type="text"
+            placeholder="Search vehicles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border rounded p-2 mb-4"
+          />
+          <div className="flex space-x-4 mb-4">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="border rounded p-2"
+            >
+              <option value="All">All Statuses</option>
+              {STATUSES.map((status) => (
+                <option key={status.name} value={status.name}>
+                  {status.name}
+                </option>
+              ))}
+            </select>
+
+            <div>
+              <input
+                type="number"
+                placeholder="Min Price"
+                value={priceRange.min}
+                onChange={(e) =>
+                  setPriceRange((prev) => ({ ...prev, min: e.target.value }))
+                }
+                className="border rounded p-2 mr-2"
+              />
+              <input
+                type="number"
+                placeholder="Max Price"
+                value={priceRange.max}
+                onChange={(e) =>
+                  setPriceRange((prev) => ({ ...prev, max: e.target.value }))
+                }
+                className="border rounded p-2"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex space-x-6 overflow-auto">
+            <div className="flex space-x-4">
               {STATUSES.map((status) => (
                 <StatusColumn
                   key={status.name}
                   status={status}
-                  vehicles={vehicles.filter(
+                  vehicles={filteredVehicles.filter(
                     (vehicle) => vehicle.status === status.name
                   )}
                 />
