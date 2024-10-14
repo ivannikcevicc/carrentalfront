@@ -164,7 +164,6 @@ export const fetchUsers = async (search?: string, role?: string) => {
     throw error;
   }
 };
-
 export const updateUser = async (id: number, userData: Partial<User>) => {
   try {
     const formattedUserData = {
@@ -180,7 +179,6 @@ export const updateUser = async (id: number, userData: Partial<User>) => {
     throw error;
   }
 };
-
 export const deleteUser = async (id: number) => {
   try {
     await api.delete(`${USERS_URL}/${id}`);
@@ -189,7 +187,6 @@ export const deleteUser = async (id: number) => {
     throw error;
   }
 };
-
 export const createUser = async (userData: Omit<User, "id">) => {
   try {
     const formattedUserData = {
@@ -215,7 +212,6 @@ export const assignRole = async (userId: number, roleId: number) => {
     throw error;
   }
 };
-
 export const removeRole = async (userId: number, roleId: number) => {
   try {
     const response = await api.post(`${API_URL}/admin/roles/remove`, {
@@ -228,7 +224,6 @@ export const removeRole = async (userId: number, roleId: number) => {
     throw error;
   }
 };
-
 export const fetchRoles = async () => {
   try {
     const response = await api.get(`${API_URL}/admin/roles`);
@@ -238,7 +233,6 @@ export const fetchRoles = async () => {
     throw error;
   }
 };
-
 export const toggleBlockUser = async (userId: number) => {
   try {
     const response = await api.post(`${USERS_URL}/${userId}/toggleblock`);
@@ -248,7 +242,6 @@ export const toggleBlockUser = async (userId: number) => {
     throw error;
   }
 };
-
 export const fetchUserDetails = async (id: number): Promise<User> => {
   try {
     const response = await api.get(`${USERS_URL}/${id}`);
@@ -256,6 +249,42 @@ export const fetchUserDetails = async (id: number): Promise<User> => {
   } catch (error) {
     console.error("Error fetching user details:", error);
     throw error;
+  }
+};
+
+export const fetchMaintenanceRecords = async (vehicleId: string) => {
+  try {
+    const response = await api.get(`${VEHICLES_URL}/${vehicleId}/maintenances`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching maintenance records:", error);
+    throw new Error("Failed to fetch maintenance records.");
+  }
+};
+export const createMaintenanceRecord = async (
+  vehicleId: string,
+  maintenanceData: {
+    description: string;
+    maintenance_date: string;
+    next_maintenance_date: string;
+    cost: number;
+    maintenance_type: string;
+  }
+) => {
+  try {
+    const response = await api.post(
+      `${VEHICLES_URL}/${vehicleId}/maintenances`,
+      maintenanceData
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      const validationErrors = error.response.data.errors;
+      console.error("Validation errors:", validationErrors);
+      throw new Error(JSON.stringify(validationErrors));
+    }
+    console.error("Error creating maintenance record:", error);
+    throw new Error("Failed to create maintenance record.");
   }
 };
 

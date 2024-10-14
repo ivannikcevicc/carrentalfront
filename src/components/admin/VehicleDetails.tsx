@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { fetchVehicleDetails } from "@/lib/admin";
+import {
+  fetchVehicleDetails,
+  fetchMaintenanceRecords,
+  createMaintenanceRecord,
+} from "@/lib/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -17,6 +21,14 @@ import { ArrowLeft } from "lucide-react";
 const VehicleDetails = ({ vehicleId, onBack }) => {
   const [vehicle, setVehicle] = useState(null);
   const [rentalHistory, setRentalHistory] = useState([]);
+  const [maintenanceHistory, setMaintenanceHistory] = useState([]);
+  const [newMaintenance, setNewMaintenance] = useState({
+    description: "",
+    maintenance_date: "",
+    next_maintenance_date: "",
+    cost: "",
+    maintenance_type: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,6 +40,7 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
         const data = await fetchVehicleDetails(vehicleId);
         setVehicle(data.vehicle);
         setRentalHistory(data.reservations || []);
+        await loadMaintenanceRecords();
       } catch (error) {
         console.error("Error loading vehicle details:", error);
         setError("Failed to load vehicle details. Please try again later.");
@@ -35,8 +48,37 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
         setIsLoading(false);
       }
     };
+
+    const loadMaintenanceRecords = async () => {
+      try {
+        const data = await fetchMaintenanceRecords(vehicleId);
+        setMaintenanceHistory(data);
+      } catch (error) {
+        console.error("Error loading maintenance records:", error);
+      }
+    };
+
     loadVehicleDetails();
   }, [vehicleId]);
+
+  const handleCreateMaintenance = async () => {
+    try {
+      const maintenance = await createMaintenanceRecord(
+        vehicleId,
+        newMaintenance
+      );
+      setMaintenanceHistory([...maintenanceHistory, maintenance]);
+      setNewMaintenance({
+        description: "",
+        maintenance_date: "",
+        next_maintenance_date: "",
+        cost: "",
+        maintenance_type: "",
+      });
+    } catch (error) {
+      console.error("Error creating maintenance record:", error);
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -153,8 +195,93 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
           <CardTitle>Maintenance History</CardTitle>
         </CardHeader>
         <CardContent>
-          <div>
-            <p>No maintenance records available.</p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Description</TableHead>
+                <TableHead>Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {maintenanceHistory.length > 0 ? (
+                maintenanceHistory.map((record) => (
+                  <TableRow key={record.id}>
+                    <TableCell>{record.description}</TableCell>
+                    <TableCell>
+                      {new Date(record.maintenance_date).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2}>
+                    No maintenance records available.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-4">
+            <h4>Create New Maintenance Record</h4>
+            <input
+              type="text"
+              placeholder="Description"
+              value={newMaintenance.description}
+              onChange={(e) =>
+                setNewMaintenance({
+                  ...newMaintenance,
+                  description: e.target.value,
+                })
+              }
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="date"
+              value={newMaintenance.maintenance_date}
+              onChange={(e) =>
+                setNewMaintenance({
+                  ...newMaintenance,
+                  maintenance_date: e.target.value,
+                })
+              }
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="date"
+              placeholder="Next Maintenance Date"
+              value={newMaintenance.next_maintenance_date}
+              onChange={(e) =>
+                setNewMaintenance({
+                  ...newMaintenance,
+                  next_maintenance_date: e.target.value,
+                })
+              }
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="number"
+              placeholder="Cost"
+              value={newMaintenance.cost}
+              onChange={(e) =>
+                setNewMaintenance({ ...newMaintenance, cost: e.target.value })
+              }
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Maintenance Type"
+              value={newMaintenance.maintenance_type}
+              onChange={(e) =>
+                setNewMaintenance({
+                  ...newMaintenance,
+                  maintenance_type: e.target.value,
+                })
+              }
+              className="border p-2 w-full mb-2"
+            />
+            <Button onClick={handleCreateMaintenance} className="mt-2">
+              Add Maintenance
+            </Button>
           </div>
         </CardContent>
       </Card>

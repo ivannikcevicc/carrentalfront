@@ -107,15 +107,7 @@ const AdminSidebar = () => {
                 <p>Reservations</p>
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                href="/admin/maintenance"
-                className={`nav-link ${isActive("/admin/maintenance")}`}
-              >
-                <i className="nav-icon fas fa-tools"></i>
-                <p>Maintenance</p>
-              </Link>
-            </li>
+
             <li className="nav-item">
               <Link
                 href="/admin/reports"
