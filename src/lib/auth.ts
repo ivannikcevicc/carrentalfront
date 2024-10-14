@@ -100,17 +100,10 @@ export async function getSession(): Promise<Session | null> {
   }
 }
 
-export async function getUserInfo(): Promise<{
-  name: string;
-  email: string;
-  avatar: string | null;
-} | null> {
+export async function getUserInfo() {
   try {
-    const response = await get<{
-      name: string;
-      email: string;
-      avatar: string | null;
-    }>("/user");
+    const response = await get("/user");
+    console.log(response);
     return response;
   } catch (error) {
     console.error("Failed to get user info:", error);
