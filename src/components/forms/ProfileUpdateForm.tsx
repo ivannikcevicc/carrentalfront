@@ -12,7 +12,7 @@ import { updateUser } from "@/lib/queries";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { getUserInfo } from "@/lib/auth";
-
+import AvatarBlank from "./../../../public/avatar.webp";
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(30, "Name is too long"),
   email: z
@@ -47,7 +47,7 @@ const ProfileUpdateForm: React.FC = () => {
           name: userInfo.name,
           email: userInfo.email,
         });
-        setAvatarPreview(userInfo.avatar || "/placeholder-avatar.png");
+        setAvatarPreview(userInfo.avatar || AvatarBlank.src);
       }
       setIsLoading(false);
     };
@@ -64,7 +64,7 @@ const ProfileUpdateForm: React.FC = () => {
       };
       reader.readAsDataURL(file);
     } else {
-      setAvatarPreview("/placeholder-avatar.png");
+      setAvatarPreview(AvatarBlank.src);
     }
   };
 
@@ -104,7 +104,7 @@ const ProfileUpdateForm: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex items-center gap-8 justify-center sm:flex-row flex-col mb-4">
         <Avatar className="w-32 h-32">
-          <AvatarImage src={avatarPreview || "/placeholder-avatar.png"} />
+          <AvatarImage src={avatarPreview || AvatarBlank.src} />
           <AvatarFallback>Avatar</AvatarFallback>
         </Avatar>
         <div className="gap-3">

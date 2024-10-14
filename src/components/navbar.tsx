@@ -17,6 +17,7 @@ import { Menu, X } from "lucide-react";
 import { LoggedUserData } from "@/lib/types";
 import LogoutButton from "./logoutButton";
 import { usePathname } from "next/navigation";
+import AvatarBlank from "./../../public/avatar.webp";
 
 const Navbar = () => {
   const [user, setUser] = useState<LoggedUserData | null>(null);
@@ -92,8 +93,10 @@ const Navbar = () => {
                 <MenubarMenu>
                   <MenubarTrigger>
                     <Avatar className="h-[55px] w-[55px]">
-                      {/* @ts-expect-error shadcn issue */}
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage
+                        src={user?.avatar || AvatarBlank.src}
+                        alt={user?.name}
+                      />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
                   </MenubarTrigger>
@@ -151,8 +154,10 @@ const Navbar = () => {
           <div className="flex flex-col gap-4">
             <div className="hover-right flex items-center p-5 gap-2">
               <Avatar className="h-[40px] w-[40px] mr-2">
-                {/* @ts-expect-error shadcn issue */}
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage
+                  src={user?.avatar || AvatarBlank.src}
+                  alt={user?.name}
+                />
                 <AvatarFallback>{user.name[0]}</AvatarFallback>
               </Avatar>
               <span className="font-semibold">{user.name}</span>

@@ -38,7 +38,7 @@ export function RegisterForm() {
     if ("user" in result) {
       // Successful registration
       console.log("Registration successful:", result);
-      router.refresh(); // Redirect to dashboard
+      router.push("/"); // Redirect to dashboard
     } else {
       // Registration failed
       console.error("Registration failed with errors:", result);

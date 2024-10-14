@@ -1,25 +1,31 @@
 "use client";
 
 import { LoginForm } from "@/components/forms/loginForm";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/lib/auth";
+import toast from "react-hot-toast";
 
-const Page = () => {
-  //Hydration errors
-  const [isClient, setIsClient] = useState(false);
+const LoginPage = () => {
+  const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const checkAuth = async () => {
+      const session = await getSession();
+      if (session) {
+        toast.error("You are already logged in.");
+        router.replace("/");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   return (
-    <>
-      {isClient ? (
-        <div className="w-full h-screen flex items-center justify-center">
-          <LoginForm />
-        </div>
-      ) : null}
-    </>
+    <div className="w-full h-screen flex items-center justify-center">
+      <LoginForm />
+    </div>
   );
 };
 
-export default Page;
+export default LoginPage;

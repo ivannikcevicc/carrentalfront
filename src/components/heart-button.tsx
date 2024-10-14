@@ -34,6 +34,7 @@ export const HeartButton = ({
     if (onToggle) {
       onToggle(isFavorite(carId));
     }
+    router.refresh();
     setIsUpdating(false);
   };
 

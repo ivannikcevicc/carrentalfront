@@ -35,7 +35,7 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormInputs) => {
     const session = await login(data.email, data.password);
     if (session) {
-      router.refresh(); // Redirect to dashboard
+      router.push("/"); // Redirect to dashboard
     } else {
       // Handle login error
       console.error("Login failed");

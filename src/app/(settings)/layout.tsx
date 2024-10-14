@@ -6,6 +6,7 @@ import { getUserInfo } from "@/lib/auth";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { redirect } from "next/navigation";
 import React from "react";
+import AvatarBlank from "./../../../public/avatar.webp";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserInfo();
@@ -22,8 +23,10 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         {/* User info for small screens */}
         <div className="md:hidden flex items-center mb-4 pt-3 pl-7">
           <Avatar className="flex w-[55px] h-[55px] mr-3">
-            {/* @ts-expect-error shadcn issue */}
-            <AvatarImage src={user?.avatar} alt={"image"} />
+            <AvatarImage
+              src={user?.avatar || AvatarBlank.src}
+              alt={user?.name}
+            />
             <AvatarFallback>image</AvatarFallback>
           </Avatar>
           <div>
@@ -44,9 +47,11 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
           <aside className="hidden md:block">
             <div className="flex items-center mb-4">
               <Avatar className="flex lg:h-[70px] lg:w-[70px] w-[55px] h-[55px] lg:mx-3 mx-2 lg:mr-4 mr-3">
-                {/* @ts-expect-error shadcn issue */}
-                <AvatarImage src={user?.avatar} alt={"image"} />
-                <AvatarFallback>image</AvatarFallback>
+                <AvatarImage
+                  src={user?.avatar || AvatarBlank.src}
+                  alt={user?.name}
+                />
+                <AvatarFallback>{user?.name}</AvatarFallback>
               </Avatar>
               <div>
                 <h3 className="lg:text-[28px] text-[23px] font-semibold">

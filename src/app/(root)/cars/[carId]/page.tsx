@@ -1,8 +1,12 @@
 import ImgPick from "@/components/imgPick";
-import { HeartButton } from "@/components/heart-button";
 import StarRating from "@/components/starRating";
 import RentProvider from "@/components/rentProvider";
-import { getReviewsByCarId, getVehicle, getReservations } from "@/lib/queries"; // Import deleteReservation
+import {
+  getReviewsByCarId,
+  getVehicle,
+  getReservations,
+  getFavoriteVehicles,
+} from "@/lib/queries"; // Import deleteReservation
 import ReviewChart from "@/components/ReviewChart";
 import ReviewProvider from "@/components/ReviewProvider";
 import RecommendVehicles from "@/components/RecommendVehicles";
@@ -13,6 +17,7 @@ import { getUserInfo } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Info } from "lucide-react";
+import CarDetailsFavoriteButton from "./_components/CarDetailsFavorite";
 
 const truncateText = (text: string, maxLength: number) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
@@ -25,14 +30,20 @@ const formatDate = (dateString: string) => {
 const Page = async ({ params }: { params: { carId: number } }) => {
   const { carId } = params;
 
-  const car = await getVehicle(carId);
-  const reviews = await getReviewsByCarId(carId);
-  const user = await getUserInfo();
+  const [car, reviews, user, favorites] = await Promise.all([
+    getVehicle(carId),
+    getReviewsByCarId(carId),
+    getUserInfo(),
+    getFavoriteVehicles(),
+  ]);
+
+  const initialIsFavorite = favorites.data.some(
+    (favCar) => favCar.id === Number(carId)
+  );
 
   let currentReservation;
   if (user) {
     const reservations = await getReservations();
-
     currentReservation = reservations.find(
       (reservation) => reservation.vehicle_id == carId
     );
@@ -62,7 +73,10 @@ const Page = async ({ params }: { params: { carId: number } }) => {
               <h2 className="text-[2rem] sm:text-[2.75rem] font-bold">
                 {car.make}
               </h2>
-              <HeartButton carId={carId} size={44} />
+              <CarDetailsFavoriteButton
+                carId={carId}
+                initialIsFavorite={initialIsFavorite}
+              />
             </div>
             <div className="flex sm:flex-row flex-col gap-3 items-start sm:items-center mt-5 mb-[1rem]">
               <StarRating rating={3.5} />

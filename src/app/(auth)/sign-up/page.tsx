@@ -1,25 +1,29 @@
 "use client";
 
 import { RegisterForm } from "@/components/forms/registerForm";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
-const Page = () => {
-  //Hydration errors
-  const [isClient, setIsClient] = useState(false);
+const SignupPage = () => {
+  const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const checkAuth = async () => {
+      const session = await getSession();
+      if (session) {
+        router.replace("/");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   return (
-    <>
-      {isClient ? (
-        <div className="w-full h-screen flex items-center justify-center">
-          <RegisterForm />
-        </div>
-      ) : null}
-    </>
+    <div className="w-full h-screen flex items-center justify-center">
+      <RegisterForm />
+    </div>
   );
 };
 
-export default Page;
+export default SignupPage;
