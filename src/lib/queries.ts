@@ -210,15 +210,30 @@ export async function updateUser(formData: FormData) {
 
 export async function getFavoriteVehicles(
   params: { page?: number; per_page?: number } = {}
-) {
+): Promise<FavoriteResponse> {
   try {
+    // Check if favorites exist in localStorage
+    const localFavorites = getLocalFavorites();
+
+    if (localFavorites) {
+      console.log("Returning favorites from localStorage");
+      return localFavorites;
+    }
+
+    // If not in localStorage, fetch from server
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.per_page)
       queryParams.append("per_page", params.per_page.toString());
 
     const result = await get(`/favorites?${queryParams.toString()}`);
-    return result as FavoriteResponse;
+    const serverFavorites = result as FavoriteResponse;
+
+    // Save to localStorage
+    setLocalFavorites(serverFavorites);
+
+    console.log("Fetched favorites from server and saved to localStorage");
+    return serverFavorites;
   } catch (error) {
     console.error("Failed to get favorites:", error);
     throw error;
@@ -227,7 +242,22 @@ export async function getFavoriteVehicles(
 
 export async function toggleFavorite(carId: number) {
   try {
+    // Toggle on the server
     const result = await post(`/favorites/${carId}`);
+
+    // Toggle in localStorage
+    const localFavorites = getLocalFavorites();
+    if (localFavorites) {
+      const updatedFavorites = {
+        ...localFavorites,
+        data: localFavorites.data.some((car) => car.id === carId)
+          ? localFavorites.data.filter((car) => car.id !== carId)
+          : [...localFavorites.data, { id: carId } as Car],
+      };
+      setLocalFavorites(updatedFavorites);
+    }
+
+    console.log("Toggled favorite on server and in localStorage");
     return result;
   } catch (error) {
     if (error instanceof Error) {
@@ -238,6 +268,21 @@ export async function toggleFavorite(carId: number) {
     throw error;
   }
 }
+
+const getLocalFavorites = (): FavoriteResponse | null => {
+  if (typeof window !== "undefined") {
+    const storedFavorites = localStorage.getItem("favorites");
+    return storedFavorites ? JSON.parse(storedFavorites) : null;
+  }
+  return null;
+};
+
+// Helper function to set favorites in localStorage
+const setLocalFavorites = (favorites: FavoriteResponse) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+};
 
 export async function getUnavailableDates(carId: number) {
   try {

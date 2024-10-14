@@ -131,10 +131,15 @@ export function RegisterForm() {
             Create an account
           </Button>
         </form>
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-4 mb-2 text-center text-sm">
           Already have an account?{" "}
           <Link href="/login" className="underline">
             Log in
+          </Link>
+        </div>
+        <div className="mt-4 text-center text-sm">
+          <Link href="/" className="underline">
+            Continue as guest
           </Link>
         </div>
       </CardContent>

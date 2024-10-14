@@ -19,6 +19,7 @@ export const HeartButton = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const router = useRouter();
 
   const checkFavoriteStatus = useCallback(async () => {
@@ -32,11 +33,8 @@ export const HeartButton = ({
       const isFavorited = favorites.data.some((car) => car.id === carId);
       setIsFavorite(isFavorited);
     } catch (error) {
-      toast.error(
-        //@ts-expect-error expected
-        err?.response?.data?.message ||
-          "Failed to fetch favorites. Please try again."
-      );
+      console.error("Failed to fetch favorites:", error);
+      toast.error("Failed to fetch favorites. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -47,34 +45,51 @@ export const HeartButton = ({
   }, [checkFavoriteStatus]);
 
   const handleToggleFavorite = async () => {
+    if (isLoading || isUpdating) return;
+
     const user = await getUserInfo();
     if (!user) {
       router.push("/login");
       return;
     }
-    setIsLoading(true);
+
+    setIsUpdating(true);
+    const newFavoriteStatus = !isFavorite;
+
+    // Optimistic update
+    setIsFavorite(newFavoriteStatus);
+    if (onToggle) {
+      onToggle(newFavoriteStatus);
+    }
+
     try {
       await toggleFavorite(carId);
-      const newFavoriteStatus = !isFavorite;
-      setIsFavorite(newFavoriteStatus);
-      if (onToggle) {
-        onToggle(newFavoriteStatus);
-      }
+      toast.success(
+        newFavoriteStatus ? "Added to favorites" : "Removed from favorites"
+      );
     } catch (error) {
+      // Revert optimistic update on error
+      setIsFavorite(!newFavoriteStatus);
+      if (onToggle) {
+        onToggle(!newFavoriteStatus);
+      }
       console.error("Failed to toggle favorite:", error);
+      toast.error("Failed to update favorite. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   };
 
   if (isLoading) {
-    return <Loader></Loader>; // Or a loading spinner
+    return <Loader className="animate-spin" />;
   }
 
   return (
     <div
       onClick={handleToggleFavorite}
-      className="relative hover:opacity-80 transition cursor-pointer translate-y-1"
+      className={`relative hover:opacity-80 transition cursor-pointer translate-y-1 ${
+        isUpdating ? "opacity-50" : ""
+      }`}
     >
       <AiOutlineHeart
         size={size + 4}

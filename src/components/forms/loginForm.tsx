@@ -93,10 +93,15 @@ export function LoginForm() {
         <div className="text-red-500 text-sm text-center">{error}</div>
       )}
 
-      <div className="mb-6 mt-2 text-center text-sm">
+      <div className="mb-2 mt-2 text-center text-sm">
         Don&apos;t have an account?{" "}
         <Link href="/sign-up" className="underline">
           Sign up
+        </Link>
+      </div>
+      <div className="mt-4 mb-6 text-center text-sm">
+        <Link href="/" className="underline">
+          Continue as guest
         </Link>
       </div>
     </Card>
