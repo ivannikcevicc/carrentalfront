@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const [vehiclesOpen, setVehiclesOpen] = useState(false);
 
   const isActive = (path) => {
-    return pathname === path ? "active" : "";
+    return pathname === path ? "text-blue-500 font-bold" : "";
   };
 
   return (
@@ -49,14 +52,42 @@ const AdminSidebar = () => {
                 <p>Dashboard</p>
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                href="/admin/vehicles"
-                className={`nav-link ${isActive("/admin/vehicles")}`}
+            <li className="">
+              <button
+                onClick={() => setVehiclesOpen(!vehiclesOpen)}
+                className="flex items-center justify-between w-full py-2 px-4 rounded text-[#c2c7d0]"
               >
-                <i className="nav-icon fas fa-car"></i>
-                <p>Vehicles</p>
-              </Link>
+                Vehicles
+                {vehiclesOpen ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
+              </button>
+              {vehiclesOpen && (
+                <ul className="pl-4 mt-2 space-y-2">
+                  <li>
+                    <Link
+                      href="/admin/vehicles"
+                      className={`block py-2 px-4 rounded hover:bg-gray-700 ${isActive(
+                        "/admin/vehicles"
+                      )}`}
+                    >
+                      All Vehicles
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/admin/vehicles/kanban"
+                      className={`block py-2 px-4 rounded hover:bg-gray-700 ${isActive(
+                        "/admin/vehicles/kanban"
+                      )}`}
+                    >
+                      Kanban
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
             <li className="nav-item">
               <Link

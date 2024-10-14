@@ -56,13 +56,17 @@ const UserManagement: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
 
   const loadUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
+      console.log(roleFilter);
+
       const data = await fetchUsers(searchTerm, roleFilter);
+
       setUsers(data.data || []);
     } catch (error) {
       setError("Failed to load users. Please try again later.");
@@ -102,10 +106,13 @@ const UserManagement: React.FC = () => {
       setName(user.name);
       setEmail(user.email);
       setSelectedRoles(user.roles.map((role) => role.id));
+      setPassword(""); // Reset password and confirm password
+      setConfirmPassword("");
     } else {
       setName("");
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
       setSelectedRoles([]);
     }
     setIsModalOpen(true);
@@ -140,6 +147,11 @@ const UserManagement: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (isNewUser && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
     try {
       const userData = {
@@ -303,20 +315,26 @@ const UserManagement: React.FC = () => {
                   className="col-span-3"
                 />
               </div>
-              {isNewUser && (
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="col-span-3"
-                  />
-                </div>
-              )}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Password</Label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="col-span-3"
+                  required={isNewUser}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Confirm Password</Label>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="col-span-3"
+                  required={isNewUser}
+                />
+              </div>
               <div className="grid grid-cols-4 items-center gap-4 ">
                 <Label className="text-right">Roles</Label>
                 <div className="col-span-3">
@@ -330,7 +348,7 @@ const UserManagement: React.FC = () => {
                           console.log(
                             `Role ID: ${role.id}, Checked: ${checked}`
                           );
-                          handleRoleChange(role.id); // Update the state
+                          handleRoleChange(role.id);
                         }}
                       />
                       <Label htmlFor={`role-${role.id}`}>{role.name}</Label>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   fetchVehicles,
   updateVehicle,
@@ -30,54 +30,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import VehicleDetails from "./VehicleDetails";
 
-const VehicleManagement: React.FC = () => {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+const baseURL = "https://lucic.tech/";
+const VehicleManagement = () => {
+  const [vehicles, setVehicles] = useState([]);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNewVehicle, setIsNewVehicle] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showVehicleDetails, setShowVehicleDetails] = useState(false);
+
+  const loadVehicles = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchVehicles(searchTerm);
+      setVehicles(data.vehicles || []);
+    } catch (error) {
+      setError("Failed to load vehicles. Please try again later.");
+      console.error("Error loading vehicles:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     loadVehicles();
-  }, []);
+  }, [loadVehicles]);
 
-  const loadVehicles = async () => {
-    const data = await fetchVehicles();
-    setVehicles(data.vehicles);
-  };
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilter(event.target.value);
-  };
-
-  const handleSort = (column: keyof Vehicle) => {
-    const direction = sortDirection === "asc" ? "desc" : "asc";
-    setSortDirection(direction);
-
-    const sortedVehicles = [...vehicles].sort((a, b) => {
-      const comparison = a[column] < b[column] ? -1 : 1;
-      return direction === "asc" ? comparison : -comparison;
-    });
-    setVehicles(sortedVehicles);
-  };
-
-  const filteredVehicles = vehicles.filter(
-    (vehicle) =>
-      vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filter === "" || vehicle.status === filter)
-  );
-
-  const openModal = (vehicle: Vehicle | null) => {
+  const openModal = (vehicle = null) => {
     setSelectedVehicle(vehicle);
     setIsNewVehicle(!vehicle);
     setIsModalOpen(true);
@@ -86,72 +77,100 @@ const VehicleManagement: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedVehicle(null);
+    setError(null);
   };
 
-  const handleSave = async (updatedVehicle: FormData) => {
+  const handleDelete = async (id) => {
     try {
-      if (isNewVehicle) {
-        await createVehicle(updatedVehicle);
-      } else {
-        if (!selectedVehicle || !selectedVehicle.id) {
-          throw new Error("Vehicle ID is missing for update operation");
-        }
-        await updateVehicle(
-          selectedVehicle.id,
-          updatedVehicle,
-          selectedVehicle
-        );
-      }
-      loadVehicles();
-      closeModal();
+      await deleteVehicle(id);
+      await loadVehicles();
     } catch (error) {
-      console.error("Error saving vehicle:", error);
+      console.error("Error deleting vehicle:", error);
+      setError("Failed to delete vehicle. Please try again.");
     }
   };
 
-  const handleDelete = async (id: number) => {
-    await deleteVehicle(id);
-    loadVehicles();
+  const handleSubmit = async (vehicleData) => {
+    try {
+      if (isNewVehicle) {
+        await createVehicle(vehicleData);
+      } else {
+        await updateVehicle(selectedVehicle.id, vehicleData);
+      }
+      await loadVehicles();
+      closeModal();
+    } catch (error) {
+      console.error("Error saving vehicle:", error);
+      setError("Failed to save vehicle. Please try again.");
+    }
   };
 
+  const handleViewDetails = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setShowVehicleDetails(true);
+  };
+
+  if (showVehicleDetails) {
+    return (
+      <VehicleDetails
+        vehicleId={selectedVehicle.id}
+        onBack={() => setShowVehicleDetails(false)}
+      />
+    );
+  }
+
   return (
-    <div className="p-4">
+    <div className="p-6">
       <Card>
         <CardHeader className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Vehicle Management</h2>
-          <Button onClick={() => openModal(null)}>
-            <Plus className="mr-2 h-4 w-4" /> Add New Vehicle
+          <h2 className="text-2xl font-semibold">Vehicle Management</h2>
+          <Button onClick={() => openModal()}>
+            <Plus className="mr-2 h-4 w-4" /> Add Vehicle
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 flex space-x-2">
+          {error && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+              role="alert"
+            >
+              <span className="block sm:inline">{error}</span>
+            </div>
+          )}
+          <div className="mb-4">
             <Input
               placeholder="Search vehicles..."
               value={searchTerm}
               onChange={handleSearch}
-              className="max-w-sm"
+              className="max-w-xs"
             />
           </div>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("make")}>Make</TableHead>
-                <TableHead onClick={() => handleSort("model")}>Model</TableHead>
-                <TableHead onClick={() => handleSort("year")}>Year</TableHead>
-                <TableHead onClick={() => handleSort("status")}>
-                  Status
-                </TableHead>
+                <TableHead>Make</TableHead>
+                <TableHead>Model</TableHead>
+                <TableHead>Year</TableHead>
+                <TableHead>Price per Day</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredVehicles.map((vehicle) => (
+              {vehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
                   <TableCell>{vehicle.make}</TableCell>
                   <TableCell>{vehicle.model}</TableCell>
                   <TableCell>{vehicle.year}</TableCell>
+                  <TableCell>${vehicle.price_per_day}</TableCell>
                   <TableCell>{vehicle.status}</TableCell>
-                  <TableCell>
+                  <TableCell className="space-x-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleViewDetails(vehicle)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" onClick={() => openModal(vehicle)}>
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -178,7 +197,7 @@ const VehicleManagement: React.FC = () => {
           </DialogHeader>
           <VehicleForm
             vehicle={selectedVehicle}
-            onSave={handleSave}
+            onSave={handleSubmit}
             onCancel={closeModal}
           />
         </DialogContent>
@@ -219,6 +238,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({
   const [errors, setErrors] = useState<Partial<Record<keyof Vehicle, string>>>(
     {}
   );
+  console.log(vehicle);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof Vehicle, string>> = {};
@@ -282,7 +302,6 @@ const VehicleForm: React.FC<VehicleFormProps> = ({
   const handleRemoveNewImage = (index: number) => {
     setNewImages((prev) => prev.filter((_, i) => i !== index));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -292,19 +311,24 @@ const VehicleForm: React.FC<VehicleFormProps> = ({
 
     const vehicleFormData = new FormData();
 
+    // Append all non-image form data
     Object.entries(formData).forEach(([key, value]) => {
       if (key !== "images") {
         vehicleFormData.append(key, value.toString());
       }
     });
 
+    // Append new images (as files) to the FormData
     newImages.forEach((image) => {
-      vehicleFormData.append("new_images[]", image);
+      vehicleFormData.append("images[]", image); // assuming `newImages` contains File objects
     });
 
+    // Append removed images
     removedImages.forEach((image) => {
       vehicleFormData.append("removed_images[]", image);
     });
+
+    console.log([...vehicleFormData]);
 
     try {
       await onSave(vehicleFormData);
@@ -440,12 +464,13 @@ const VehicleForm: React.FC<VehicleFormProps> = ({
       <div>
         <h3 className="text-lg font-semibold mb-2">Current Images</h3>
         <div className="flex flex-wrap gap-2">
-          {Array.isArray(formData.images) &&
-            formData.images.map((image, index) => (
+          {formData.images.length > 0 &&
+            Array.isArray(JSON.parse(formData.images)) &&
+            JSON.parse(formData.images).map((image, index) => (
               <div key={index} className="relative">
                 <img
-                  src={image}
-                  alt={`Vehicle ${index}`}
+                  src={`${baseURL}storage/${image}`}
+                  alt={`${image}`}
                   className="w-24 h-24 object-cover rounded"
                 />
                 <button
@@ -459,6 +484,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({
             ))}
         </div>
       </div>
+
       <div>
         <h3 className="text-lg font-semibold mb-2">New Images</h3>
         <Input
