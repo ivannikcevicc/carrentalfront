@@ -90,10 +90,7 @@ export interface DatePickerProps {
   setDateRange: React.Dispatch<React.SetStateAction<DateTimeRange | undefined>>;
   mode: "search" | "rent";
   showTimeSelect?: boolean;
-  onSubmit?: (data: {
-    dateRange: DateTimeRange | undefined;
-    selectedCity: string | undefined;
-  }) => void;
+  onSubmit?: (data: { dateRange: DateTimeRange | undefined }) => void;
   submitButtonText?: string;
   price?: string;
   carId?: number | undefined;
