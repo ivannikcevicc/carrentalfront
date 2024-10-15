@@ -73,7 +73,6 @@ export default function CarsPage() {
       }
     } catch (error) {
       toast.error(
-        //@ts-expect-error expected
         error?.response?.data?.message ||
           "Failed to fetch cars. Please try again."
       );
