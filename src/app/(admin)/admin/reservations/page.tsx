@@ -19,11 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-toastify";
-import {
-  fetchReservations,
-  generateInvoice,
-  updateReservationStatus,
-} from "@/lib/admin";
+import { fetchReservations, updateReservationStatus } from "@/lib/admin";
 import { Loader2, FileText } from "lucide-react";
 
 interface Reservation {
@@ -100,12 +96,6 @@ const ReservationsPage = () => {
       setUpdatingStatus(null);
     }
   };
-  const handleGenerateInvoice = async () => {
-    console.log("Test");
-  };
-  useEffect(() => {
-    loadReservations();
-  }, []);
 
   if (loading)
     return (
@@ -220,9 +210,6 @@ const ReservationsPage = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() =>
-                                handleGenerateInvoice(reservation.id)
-                              }
                               disabled={generatingInvoice === reservation.id}
                             >
                               {generatingInvoice === reservation.id ? (
