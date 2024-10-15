@@ -5,6 +5,32 @@ import { Session, User } from "@/lib/types";
 import { get, post } from "@/lib/httpClient";
 import axios from "axios";
 
+interface Role {
+  id: number;
+  name: string;
+  guard_name: string;
+  created_at: string;
+  updated_at: string;
+  pivot: {
+    model_type: string;
+    model_id: number;
+    role_id: number;
+  };
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string | null;
+  email_verified_at: string;
+  is_admin: boolean;
+  is_blocked: boolean;
+  created_at: string;
+  updated_at: string;
+  roles: Role[];
+}
+
 export async function login(
   email: string,
   password: string
@@ -132,7 +158,7 @@ export async function getUserInfo(): Promise<{
   }
 }
 
-export async function getUser() {
+export async function getUser(): Promise<User | null> {
   try {
     const response = await get("/user");
     console.log(response);

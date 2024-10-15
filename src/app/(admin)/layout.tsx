@@ -12,6 +12,32 @@ interface AdminLayoutProps {
   children: ReactNode;
 }
 
+interface Role {
+  id: number;
+  name: string;
+  guard_name: string;
+  created_at: string;
+  updated_at: string;
+  pivot: {
+    model_type: string;
+    model_id: number;
+    role_id: number;
+  };
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string | null;
+  email_verified_at: string;
+  is_admin: boolean;
+  is_blocked: boolean;
+  created_at: string;
+  updated_at: string;
+  roles: Role[];
+}
+
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -19,7 +45,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const user = await getUser();
+        const user: User | null = await getUser();
         console.log(user);
         if (!user) {
           router.push("/login");
