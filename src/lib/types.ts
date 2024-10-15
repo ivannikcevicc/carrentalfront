@@ -1,5 +1,5 @@
 import { DateRange } from "react-day-picker";
-import { Role } from "./adminTypes";
+import { Role } from "@/app/(admin)/layout";
 
 export interface Car {
   id: number;

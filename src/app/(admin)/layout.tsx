@@ -12,7 +12,7 @@ interface AdminLayoutProps {
   children: ReactNode;
 }
 
-interface Role {
+export interface Role {
   id: number;
   name: string;
   guard_name: string;
