@@ -119,6 +119,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
         from: fromISO ? parseISO(fromISO) : null,
         to: toISO ? parseISO(toISO) : null,
       },
+      selectedCity: selectedCity,
     });
   };
 
