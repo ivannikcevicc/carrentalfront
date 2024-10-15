@@ -33,3 +33,13 @@ export interface Role {
   id: number;
   name: string;
 }
+
+export interface Reservation {
+  id: number;
+  user: { name: string };
+  vehicle: { name: string };
+  start_date: string;
+  end_date: string;
+  total_price: number;
+  status: string;
+}

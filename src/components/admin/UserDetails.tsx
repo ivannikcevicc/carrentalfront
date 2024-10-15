@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { User, Reservation, RentalSummary } from "@/lib/adminTypes";
+import { User, Reservation } from "@/lib/adminTypes";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
@@ -18,9 +18,7 @@ const UserDetails: React.FC = () => {
   const id = searchParams.get("id");
   const [user, setUser] = useState<User | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rentalSummary, setRentalSummary] = useState<RentalSummary | null>(
-    null
-  );
+  const [rentalSummary, setRentalSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
