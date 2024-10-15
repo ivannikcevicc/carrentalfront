@@ -63,7 +63,7 @@ const StatusColumn = ({ status, vehicles }) => (
 
 const VehicleKanbanPage = () => {
   const [vehicles, setVehicles] = useState([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
