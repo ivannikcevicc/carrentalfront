@@ -26,6 +26,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import toast from "react-hot-toast";
+import { getUserInfo } from "@/lib/auth";
 
 export default function CarsPage() {
   const [cars, setCars] = useState<PaginatedResponse<Car> | null>(null);
@@ -58,18 +59,24 @@ export default function CarsPage() {
     };
 
     try {
-      const [carsResult, favoritesResult] = await Promise.all([
-        getVehicles(filters),
-        getFavoriteVehicles(),
-      ]);
-      //Pagination
+      const user = await getUserInfo(); // Get user info
+
+      const carsResult = await getVehicles(filters);
+
       if (carsResult.data.length === 0 && carsResult.meta.current_page > 1) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", "1");
         router.push(`/cars?${params.toString()}`, { scroll: false });
       } else {
         setCars(carsResult);
-        setInitialFavorites(favoritesResult.data.map((car) => car.id));
+
+        // Only fetch favorites if user exists
+        if (user) {
+          const favoritesResult = await getFavoriteVehicles();
+          setInitialFavorites(favoritesResult.data.map((car) => car.id));
+        } else {
+          setInitialFavorites([]); // Set to empty array if no user
+        }
       }
     } catch (error) {
       toast.error(
