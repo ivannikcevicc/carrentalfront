@@ -10,8 +10,7 @@ This frontend application provides a user interface for customers to browse, sel
 
 - Next.js
 - Axios for API requests
-- React Router for navigation
-- Material-UI for styling
+- AdminLTE
 
 ## Setup
 
