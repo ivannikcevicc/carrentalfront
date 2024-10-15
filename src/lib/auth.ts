@@ -18,19 +18,6 @@ interface Role {
   };
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatar: string | null;
-  email_verified_at: string;
-  is_admin: boolean;
-  is_blocked: boolean;
-  created_at: string;
-  updated_at: string;
-  roles: Role[];
-}
-
 export async function login(
   email: string,
   password: string
@@ -162,7 +149,7 @@ export async function getUser(): Promise<User | null> {
   try {
     const response = await get("/user");
     console.log(response);
-    return response;
+    return response as User;
   } catch (error) {
     console.error("Failed to get user info:", error);
     return null;

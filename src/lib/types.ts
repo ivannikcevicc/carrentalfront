@@ -1,4 +1,5 @@
 import { DateRange } from "react-day-picker";
+import { Role } from "./adminTypes";
 
 export interface Car {
   id: number;
@@ -24,13 +25,13 @@ export interface User {
   name: string;
   email: string;
   avatar: string | null;
-  email_verified_at: string | null;
+  email_verified_at: string;
   is_admin: boolean;
   is_blocked: boolean;
   created_at: string;
   updated_at: string;
+  roles: Role[];
 }
-
 export type UpdateUserData = {
   name: string;
   email: string;

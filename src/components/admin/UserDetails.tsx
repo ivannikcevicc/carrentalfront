@@ -70,15 +70,19 @@ const UserDetails: React.FC = () => {
             </p>
             <p>
               <strong>Status:</strong>
-              <Badge variant={user.is_blocked ? "destructive" : "success"}>
+              <Badge variant={user.is_blocked ? "destructive" : "default"}>
                 {user.is_blocked ? "Blocked" : "Active"}
               </Badge>
             </p>
             <div>
               <strong>Roles:</strong>
               {user.roles.map((role) => (
-                <Badge key={role} className="mr-2" variant="secondary">
-                  {role}
+                <Badge
+                  key={role.toString()}
+                  className="mr-2"
+                  variant="secondary"
+                >
+                  {role.toString()}
                 </Badge>
               ))}
             </div>
@@ -131,7 +135,7 @@ const UserDetails: React.FC = () => {
                         <Badge
                           variant={
                             reservation.status === "completed"
-                              ? "success"
+                              ? "default"
                               : "secondary"
                           }
                         >

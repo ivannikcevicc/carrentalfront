@@ -26,7 +26,7 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
     description: "",
     maintenance_date: "",
     next_maintenance_date: "",
-    cost: "",
+    cost: 0,
     maintenance_type: "",
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +72,7 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
         description: "",
         maintenance_date: "",
         next_maintenance_date: "",
-        cost: "",
+        cost: 0,
         maintenance_type: "",
       });
     } catch (error) {
@@ -263,7 +263,10 @@ const VehicleDetails = ({ vehicleId, onBack }) => {
               placeholder="Cost"
               value={newMaintenance.cost}
               onChange={(e) =>
-                setNewMaintenance({ ...newMaintenance, cost: e.target.value })
+                setNewMaintenance({
+                  ...newMaintenance,
+                  cost: e.target.valueAsNumber,
+                })
               }
               className="border p-2 w-full mb-2"
             />
