@@ -116,8 +116,8 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
     onSubmit?.({
       dateRange: {
         ...dateRange,
-        from: fromISO,
-        to: toISO,
+        from: fromISO ? parseISO(fromISO) : null,
+        to: toISO ? parseISO(toISO) : null,
       },
     });
   };
