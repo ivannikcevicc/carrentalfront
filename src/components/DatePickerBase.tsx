@@ -116,9 +116,7 @@ const DatePickerBase: React.FC<DatePickerProps> = ({
     onSubmit?.({
       dateRange: {
         ...dateRange,
-        //@ts-expect-error Type 'DateTimeRange' is not assignable to type 'DateRange'.
         from: fromISO,
-        //@ts-expect-error Type 'DateTimeRange' is not assignable to type 'DateRange'.
         to: toISO,
       },
     });

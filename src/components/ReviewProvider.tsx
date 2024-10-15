@@ -125,7 +125,6 @@ const ReviewProvider = ({
     } catch (error) {
       // Handle errors and show a custom error message
       setError(
-        //@ts-expect-error expected
         error?.response?.data?.message ||
           "You can only review vehicles from reservations that have started."
       );

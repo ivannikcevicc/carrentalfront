@@ -37,7 +37,6 @@ const RentProvider: React.FC<RentProviderProps> = ({ price, carId }) => {
     } catch (err) {
       console.error(err);
       toast.error(
-        //@ts-expect-error expected
         err?.response?.data?.message ||
           "Failed to create reservation. Please try again."
       );
