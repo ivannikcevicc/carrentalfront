@@ -242,7 +242,19 @@ export const toggleBlockUser = async (userId: number) => {
     throw error;
   }
 };
-export const fetchUserDetails = async (id: number): Promise<User> => {
+interface UserDetailsResponse {
+  user: User;
+  rental_history: Reservation[];
+  rental_summary: {
+    total_rentals: number;
+    total_spent: number;
+    favorite_vehicle: number | null;
+  };
+}
+
+export const fetchUserDetails = async (
+  id: number
+): Promise<UserDetailsResponse> => {
   try {
     const response = await api.get(`${USERS_URL}/${id}`);
     return response.data;

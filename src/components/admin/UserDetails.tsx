@@ -17,7 +17,7 @@ const UserDetails: React.FC = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [user, setUser] = useState<User | null>(null);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [reservations, setReservations] = useState([]);
   const [rentalSummary, setRentalSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
