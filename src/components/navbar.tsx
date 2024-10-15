@@ -11,7 +11,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import Link from "next/link";
-import { getUserInfo } from "@/lib/auth";
+import { getUser, getUserInfo } from "@/lib/auth";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import { LoggedUserData } from "@/lib/types";
@@ -23,11 +23,15 @@ const Navbar = () => {
   const [user, setUser] = useState<LoggedUserData | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const userInfo = await getUserInfo();
+        const userAdmin = await getUser();
+        if (userAdmin.roles.length > 0) {
+          setIsAdmin(true);
+        }
         setUser(userInfo);
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -102,6 +106,11 @@ const Navbar = () => {
                   </MenubarTrigger>
                   <MenubarContent>
                     <span className="font-semibold p-3">{user.name}</span>
+                    {isAdmin && (
+                      <MenubarItem>
+                        <Link href="/admin/dashboard">Admin Panel</Link>
+                      </MenubarItem>
+                    )}
                     <MenubarItem>
                       <LogoutButton />
                     </MenubarItem>
