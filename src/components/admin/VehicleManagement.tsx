@@ -38,7 +38,7 @@ import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import VehicleDetails from "./VehicleDetails";
 
-const baseURL = "https://lucic.tech/";
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 const VehicleManagement = () => {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
