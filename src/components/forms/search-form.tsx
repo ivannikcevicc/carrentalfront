@@ -39,10 +39,10 @@ const filterItems = [
   {
     category: "Brand",
     items: [
-      { id: "bmw", label: "BMW", count: 10 },
-      { id: "porsche", label: "Porsche", count: 14 },
-      { id: "toyota", label: "Toyota", count: 12 },
-      { id: "volkswagen", label: "Volkswagen", count: 16 },
+      { id: "BMW", label: "BMW", count: 10 },
+      { id: "Porsche", label: "Porsche", count: 14 },
+      { id: "Toyota", label: "Toyota", count: 12 },
+      { id: "Volkswagen", label: "Volkswagen", count: 16 },
     ],
   },
 ] as const;
@@ -177,7 +177,8 @@ export function SearchForm({ onClose }: SearchFormProps) {
                               />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              {item.label} ({item.count})
+                              {item.label}
+                              {/* {item.label} ({item.count}) */}
                             </FormLabel>
                           </FormItem>
                         );
