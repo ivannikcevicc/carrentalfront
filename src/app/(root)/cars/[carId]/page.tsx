@@ -84,7 +84,7 @@ const Page = async ({ params }: { params: { carId: number } }) => {
     <>
       <div className="p-[3.5%] flex lg:flex-row flex-col gap-[4%] ">
         <aside className="lg:w-[47%] w-full">
-          <ImgPick />
+          <ImgPick car={car} />
         </aside>
         <main className="lg:w-[53%] w-full">
           <div className="rounded-2xl bg-white p-8 flex flex-col">

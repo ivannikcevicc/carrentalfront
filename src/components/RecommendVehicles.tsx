@@ -23,7 +23,7 @@ const RecommendVehicles = async ({
             <div className="flex items-stretch rounded-lg transition-all duration-300 ease-in-out cursor-pointer hover:shadow-md hover:border-primary border-2 border-transparent">
               <div className="w-1/4 min-w-[100px] max-w-[150px]">
                 <img
-                  src={car.images}
+                  src={JSON.parse(car.images)[0]}
                   alt={`${car.make} ${car.model}`}
                   className="w-full h-full object-cover rounded-l-md"
                 />

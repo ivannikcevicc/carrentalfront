@@ -22,7 +22,7 @@ const card = ({ car }: { car: Car }) => {
         <HeartButton carId={car.id} />
       </div>
       <img
-        src={car.images}
+        src={JSON.parse(car.images)[0]}
         alt="car"
         className="w-[80%] mx-auto h-auto my-[2rem]"
       />
